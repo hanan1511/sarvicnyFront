@@ -1,0 +1,51 @@
+.imgo{
+  width: 20%;
+  height: 20%;
+}
+.navbaro {
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
+  }
+  
+  .nav-link {
+    color: white;
+  }
+  
+   ul li a {
+    position: relative;
+  }
+  
+  .navbarBrand {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    color: white;
+    font-family: "Montserrat", sans-serif;
+    text-decoration: none;
+  }
+  
+   ul li a::before {
+    content: "";
+    position: absolute;
+    top: 35px;
+    left: 0px;
+    width: 0;
+    height: 2px;
+    z-index: 2;
+    background-color: white;
+    transition: width 0.3s, color 0.3s;
+  }
+  
+   ul li a:hover::before {
+    width: 100%;
+  }
+  
+  nav ul li a:hover {
+    color: white !important;
+  }
+  
+  .others {
+    font-size: 19px;
+    font-family: "Poppins", sans-serif;
+    color: white !important;
+  }
+  

@@ -1,0 +1,43 @@
+.services {
+  background-color: #f3f4f6;
+  font-family: "Poppins", sans-serif;
+}
+h1 {
+  font-size: 70px;
+  font-weight: 900;
+  color: #212121;
+  line-height: 70px;
+}
+.formo:focus {
+  box-shadow: none;
+  outline: auto;
+}
+.formo {
+  padding: 14px 10px;
+}
+
+.formo::placeholder {
+  font-weight: 400;
+  color: #b2b5bb;
+}
+
+
+.orderDetails {
+  border: 1px solid #e7e6e6;
+  border-radius: 3px;
+}
+h3 {
+  font-size: 18px;
+  color: #979a9b;
+}
+h4 {
+  font-size: 20px;
+  font-weight: 500;
+}
+.bottomBorder {
+  border-bottom: 1px solid #e7e6e6;
+}
+.butno:focus {
+  box-shadow: none;
+  background-color: white;
+} 

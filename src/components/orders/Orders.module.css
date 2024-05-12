@@ -1,0 +1,23 @@
+.text1 {
+    font-size: 70px;
+    font-weight: 600;
+    color: #212121;
+    line-height: 70px;
+  }
+    .text3{
+    font-size: 18px;
+    color: #979a9b;
+    font-weight: 700;
+  }
+  .bordero {
+    border: 1px solid #d5d8dc;
+  }
+  .bgColor {
+    background-color: #f1f1ef;
+  }
+  .bottomBorder {
+    border-bottom: 1px solid #e7e6e6;
+  }
+  .but{
+    color: white;
+  }

@@ -1,0 +1,89 @@
+
+.corners{
+    display: flex;
+}
+.corner{
+    width: 30%;
+    height: 30%;
+    /* display: flex;
+    align-items: end;
+    flex-direction: row-reverse; */
+    margin-left: 40%;
+
+}
+.corner2{
+    width: 30%;
+    height: 30%;
+    /*margin-left: 70%;*/
+}
+.corner3{
+    margin-top: -0px;
+    width: 30%;
+}
+
+.downcorn{
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.formCont{
+    border-radius: 7px;
+    /*border-style: solid;*/
+    border-width: 2px;
+    background-color: #eeeeee ;
+    box-shadow: 10px 5px 5px #dcdada ;
+    display: flex;
+    justify-content:space-around;
+    align-items: center;
+}
+.form{
+    border-radius: 7px;
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.bigHead{
+    margin-top: 50px;
+    color: rgba(108, 107, 108, 0.299);
+    font-size: 70px;
+    text-align: center;
+    font-weight: 500;
+    position: relative;
+}
+.smallHead{
+    color: black;
+    font-size: 40px;
+    text-align: center;
+    font-weight: 500;
+    margin-top: -93px;
+    margin-left: -5px;
+    /*position: ;*/
+}
+.desc{
+    color: rgba(108, 107, 108, 0.299);
+    font-size: 20px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.headers{
+    margin-top: -134px;
+}
+
+.cards{
+    border-radius: 7px;
+    background-color: white;
+    text-align: center;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    /* flex-direction: column; */
+}
+.slot{
+    border-radius: 7px;
+    border-style: solid;
+    border-color: #eeeeee;
+    border-width: 2px;
+    text-align: center;
+}

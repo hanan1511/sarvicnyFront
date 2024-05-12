@@ -1,0 +1,15 @@
+.services {
+    background-color: #f3f4f6;
+    font-family: "Poppins", sans-serif;
+  }
+  h1 {
+    font-size: 70px;
+    font-weight: 900;
+    color: #212121;
+    line-height: 70px;
+  }
+
+  .clickedSlot {
+    border: 2px solid black;
+  }
+  

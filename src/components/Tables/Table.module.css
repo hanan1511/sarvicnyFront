@@ -1,0 +1,23 @@
+@import url('https://cdn.syncfusion.com/ej2/material.css');
+.tableContainer {
+    border: 1px solid #ccc;
+    border-collapse: collapse;
+    width: 50%;
+  }
+  
+  /* Style for header row */
+  .headercell {
+    background-color: #f2f2f2;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  /* Style for data rows */
+  .e-rowcell {
+    border-bottom: 1px solid #ccc;
+  }
+  
+  /* Add zebra stripes to data rows */
+  .e-grid .e-row.e-alt-row .e-rowcell {
+    background-color: #f9f9f9;
+  }
+  

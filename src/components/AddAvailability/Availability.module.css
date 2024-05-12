@@ -1,0 +1,88 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Rethink Sans", sans-serif;
+}
+:root {
+  --primary-color: #0b396e;
+  --main-Padding: 80px 50px 70px;
+  --margin-bottom: 50px;
+}
+.availability {
+  padding: var(--main-Padding);
+  background-color: var(--primary-color);
+}
+.mainBackGorund {
+  background-color: #0b396e;
+  text-align: center !important;
+}
+.mainColor {
+  color: var(--primary-color);
+}
+.para {
+  word-spacing: 2px;
+  line-height: 1.6;
+  margin: 0;
+  font-size: 18px;
+  color: #b3bfca;
+}
+
+.pHeader {
+  letter-spacing: 3px;
+  word-spacing: 6px;
+  line-height: 1.6;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.outer {
+  border: 5px solid white;
+  border-radius: 5px;
+}
+.w48 {
+  width: 48%;
+}
+.w33 {
+  width: 33%;
+}
+.inputPadding {
+  padding: 12px;
+  color: #b3bfca;
+}
+.inputPadding::placeholder {
+  font-family: "Font Awesome 5 Free";
+  color: #b3bfca;
+  letter-spacing: 3px;
+}
+.email::placeholder {
+  font-family: "Font Awesome 5 Free";
+  color: #b3bfca;
+  letter-spacing: 3px;
+  font-size: 16px;
+}
+.email {
+  padding: 12px;
+}
+.bolding {
+  font-weight: 500;
+}
+.heading {
+  padding: var(--main-Padding);
+  font-weight: 700;
+}
+.trash {
+  padding: var(--main-Padding);
+}
+.cinzel {
+  font-family: "Cinzel", serif;
+  font-weight: 700;
+}
+.highText {
+  font-size: 30px;
+}
+.para2 {
+  line-height: 1.9;
+  color: #948d8d;
+}

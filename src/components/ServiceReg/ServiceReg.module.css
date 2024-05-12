@@ -1,0 +1,253 @@
+.corners{
+    display: flex;
+}
+.corner{
+    width: 20%;
+    height: 30%;
+    margin-left: 60%;
+
+}
+.bigHead{
+    margin-top: 50px;
+    color: rgba(108, 107, 108, 0.299);
+    font-size: 70px;
+    text-align: center;
+    font-weight: 500;
+    position: relative;
+}
+.smallHead{
+    color: black;
+    font-size: 40px;
+    text-align: center;
+    font-weight: 500;
+    margin-top: -93px;
+    margin-left: -5px;
+    /*position: ;*/
+}
+.desc{
+    color: rgba(108, 107, 108, 0.299);
+    font-size: 20px;
+    text-align: center;
+    font-weight: 500;
+}
+.corner2{
+    width: 20%;
+    height: 30%;
+    margin-top: 8px;
+}
+.corner3{
+    margin-top: -0px;
+    width: 20%;
+}
+.downcorn{
+    display: flex;
+    flex-direction: row-reverse;
+}
+.corner4{
+    width: 20%;
+    height: 30%;
+    margin-right: 60%;
+    margin-bottom: -34px;
+}
+.mainHeadingSpan{
+    color:  #72E9FD !important;
+}
+.mainLogin{
+    color: #152238;
+    text-decoration: none;
+    font-size: 30px;
+}
+
+.mainLogin:hover{
+    color:#72E9FD;
+}
+
+.signUpPage{
+    margin-top: -50px;
+}
+.mainParagraph{
+    font-size: 18px;
+    font-family: "Poppins", sans-serif;
+    color: black;
+}
+.mainHeading{
+  margin-bottom: 80px;
+  font-size: 50px;
+}
+
+.imgo{
+    margin-top: 80px;
+    position: sticky;
+    top: 0;
+    margin-left: 70px;
+}
+
+/* .imgo::before{
+    content: "";
+    position: absolute;
+    top: 20px;
+    right: -10%;
+    width: 2px;
+    height: 95%;
+    z-index: 2;
+    background-color: #525252;
+    transition: width 0.3s, color 0.3s;
+} */
+
+.signUpForm{
+
+    background-color:#F5F6F8;
+    position: relative;
+    color: #303D5C;
+    box-shadow: 10px 10px #dcdada ;
+}
+
+/* .signUpForm::before{
+    content: "";
+    position: absolute;
+    top: 20px;
+    right: -10%;
+    width: 2px;
+    height: 95%;
+    z-index: 2;
+    background-color: #EEEEEE;
+    transition: width 0.3s, color 0.3s;
+} */
+
+input,select {
+    background-color: #ffffff;
+    padding: 15px;
+    border-color: #F5F6F8;
+}
+
+input:focus{
+    border-color: #303D5C !important;
+}
+
+select:focus{
+    border-color: #303D5C !important;
+}
+
+.btnMain {
+    background-color: #152238;
+    color: white;
+    font-weight: 700;
+    font-size: 18px;
+}
+  
+.btnMain:hover {
+    background-color: #152238;
+    color: white;  
+}
+
+.steps_list{
+    list-style-type: none;
+    border-radius: 10px;
+    /* box-shadow: 0px 15px 25px rgb(0, 0, 0,0.1); */
+    display: flex;
+    padding: 20px 10px;
+    z-index: 10;
+    position: relative;
+}
+
+.steps_item{
+    padding: 0px 20px;
+    flex-basis: 0;
+    -webkit-box-flex: 1;
+    flex-grow: 1;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    min-width: 170px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.steps_item + .steps_item::after{
+    content: "";
+    position: absolute;
+    left:0;
+    background-color: #152238;
+    top:19px;
+    width: 100%;
+    height: 5px;
+    transform: translateX(-50%);
+    z-index: -10;
+}
+
+.count{
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    border-radius: 50%;
+    /*border: 4px solid #dcdada;*/
+    position: relative;
+    font-weight: 600;
+    z-index: 10;
+    color: transparent;
+}
+
+.count::after{
+    content: "";
+    background-color:#152238 ;
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    z-index: -10;
+    border-radius: 50%;
+}
+
+.countCurr::after{
+    content: "";
+    background-color: #152238;
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    z-index: -10;
+    border-radius: 50%;
+}
+
+.countCurr{
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    border-radius: 50%;
+    /*border: 4px solid #dcdada;*/
+    position: relative;
+    font-weight: 600;
+    z-index: 10;
+    color: transparent;
+}
+.infoCurr{
+    font-weight: 600;
+}
+.info{
+    font-weight: 600;
+}
+/* for the right sign*/
+.countCurr::before{
+    content: "";
+    height: 10px;
+    width: 20px;
+    border-left:3px solid #fff ;
+    border-bottom: 3px solid #fff;
+    position: absolute;
+    left: 50%;
+    top: 20%;
+    transform: translate(-50%, 60%) rotate(-45deg);
+    transform-origin: center center;
+}
