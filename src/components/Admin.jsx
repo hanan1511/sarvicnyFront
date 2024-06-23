@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react'
 import { FiSettings } from 'react-icons/fi';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 import { StateContext } from '../contexts/ContextProvider.js';
-
+import "../index.css";
 import Navbar from './Navbar.jsx'
 import Footer from './Footer.jsx'
 import Sidebar from './Sidebar.jsx'

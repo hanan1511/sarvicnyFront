@@ -1,0 +1,18 @@
+.services {
+  background-color: #f3f4f6;
+  font-family: "Poppins", sans-serif;
+}
+
+.subset {
+  background-color: #f3f4f6;
+  font-family: "Poppins", sans-serif;
+  position: relative;
+}
+
+.subset i {
+  position: absolute;
+  top: 8px; /* Adjust if needed */
+  right: 8px; /* Adjust if needed */
+  color: red;
+  cursor: pointer;
+}

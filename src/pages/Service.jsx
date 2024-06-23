@@ -133,7 +133,7 @@ export default function Service() {
 
         <div className="mb-3">
           <label htmlFor=" parentServiceID" className="form-label">Parent ServiceID if there</label>
-          <Field type="text" name=" parentServiceID" className="form-control" />
+          <Field type="text" name=" parentServiceID" className="form-control"  />
         </div>
         <div className="mb-3">
             <label htmlFor="criteriaID" className="form-label">Criteria </label>
@@ -158,7 +158,7 @@ export default function Service() {
           <ErrorMessage name="description" component="div" className="text-danger" />
         </div>
 
-        <button type="submit" id="but" disabled={isLoading} className="btn btn-primary">Submit</button>
+        <button type="submit" id="but" disabled={isLoading} className="btn btn-primary text-dark">Submit</button>
       </Form>
     </Formik>
     </div>
