@@ -48,7 +48,7 @@ const Employees = () => {
   
   let { state } = useLocation();
   console.log(state);
-  const { userId } = useAppContext();
+  const userId = localStorage.getItem('userId');
   const navigate = useNavigate();
   const [workers, setWorkers] = useState(dummyWorkers); // Using dummy data
   const [order, setOrder] = useState(null);
@@ -111,14 +111,15 @@ const Employees = () => {
         console.log(getCurrentDate());
         setCurrentDate(getCurrentDate());
       }
-      const values = {
-        providerId: worker.id,
-        serviceId: state.id,
-        slotID: clicked,
-        districtID: "fb7b875a-9b3b-4f0d-a219-2a42590afa7a",
-        requestDay: currentDate,
-        problemDescription: state.desc,
-      };
+      const values={
+        providerId:worker.id,
+        serviceIDs:[state.id],
+        slotID:clicked,
+        districtID:"d1adbe94-6ceb-4c84-a72f-5e5637206f42",
+        adderss: "cairo",
+        requestDay:currentDate,
+        problemDescription:state.desc,
+      }
       console.log("customer", userId);
       addCart(userId, values);
     } else {

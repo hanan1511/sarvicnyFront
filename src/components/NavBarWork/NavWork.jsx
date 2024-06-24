@@ -12,7 +12,7 @@ function NavWork() {
       >
         <div className="container">
           <Link className="navbar-brand" to="/provider">
-            <img src="nocurve.png" className={`${Style.myImage}`} />
+            <img src="/nocurve.png" className={`${Style.myImage}`} />
           </Link>
           <button
             className="navbar-toggler"

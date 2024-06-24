@@ -8,7 +8,7 @@ import { useAppContext } from"../context/AppContext";
 
 export default function ServiceDescription() {
   let { state } = useLocation();
-  const { userId } = useAppContext();
+  const userId  = localStorage.getItem('userId');
   const[desc,setDescription]=useState("");
   const [error,setError]= useState();
   const navigate=useNavigate();
