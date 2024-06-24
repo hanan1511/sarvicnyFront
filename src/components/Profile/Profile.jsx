@@ -3,25 +3,41 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useAppContext } from"../context/AppContext";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 export default function Profile(){
-    const { userId } = useAppContext();
-    
+    const userId  = localStorage.getItem('userId');
+    const [error, seterror] = useState(null);
     const [profile,setProfile]= useState(null);
     const [avail,setAvail]=useState(null);
     async function getProfile(){
-        const response = await axios.get(`https://localhost:7188/api/ServiceProvider/ShowProviderProfile?providerId=${userId}`);
+        console.log(userId);
+        const response = await axios.get(`https://localhost:7188/api/ServiceProvider/showProviderProfile?providerId=${userId}`);
         console.log(response.data);
         if(!response.data.isError){
             setProfile(response.data.payload);
             console.log(response.data.payload);
         }
 
-        const respons1= await axios.get(`https://localhost:7188/api/ServiceProvider/GetServiceProviderAvailability/${userId}`);
+        const respons1= await axios.get(`https://localhost:7188/api/ServiceProvider/getServiceProviderAvailability/${userId}`);
         console.log('data',respons1.data);
         if(!respons1.data.isError){
             setAvail(respons1.data.payload);
         }
     }
+
+    async function handleDelete(id){
+        const response = await axios.post(`https://localhost:7188/api/ServiceProvider/removeAvailability?availabilityId=${id}&providerId=${userId}`)
+        .catch((err) => {
+        seterror(err.response.data.message);
+        });
+        if(!response.data.isError){
+            alert("day removed successfuly");
+            window.location.reload();
+            // navigate('/');
+        }
+    }
+
     useEffect(()=>{
         getProfile();
     },[]);
@@ -29,7 +45,7 @@ export default function Profile(){
 return(
     <>
     <div className={`${Style.corners}`} >
-        <img src="upperCorner2.png" className={`${Style.corner3}`} />
+        <img src="/upperCorner2.png" className={`${Style.corner3}`} />
         {/*<img src="upperCorner.png" className={`${Style.corner}`} />*/}
     </div>
     <div className="container justify-content-center">
@@ -45,18 +61,29 @@ return(
                     {avail?
                     avail.map((elem)=>(
                         <div className={`container d-flex flex-wrap justify-content-center mt-3`}>
-                            <div className={`${Style.cards} container`}>
+                            
+                            <div className={`${Style.cards} container position-relative`}>
+
+                                <FontAwesomeIcon 
+                                    icon={faTimes} 
+                                    className={`position-absolute ${Style.icondel}`} 
+                                    style={{ top: '10px', right: '10px', cursor: 'pointer' }}  
+                                    onClick={() => handleDelete(elem.providerAvailabilityID)} 
+                                />
+                            
                                 <h5 className="text-center mt-3 col-md-12">{elem.dayOfWeek}</h5>
-                                <p className="text-center col-md-12">{elem.availabilityDate.substring(0,10)}</p>
-                                {/* <div className={`container `}> */}
+                                {/*<p className="text-center col-md-12">{elem.availabilityDate.substring(0,10)}</p>
+                                 <div className={`container `}> */}
                                 {elem.slots.map((slot)=>(
                                     <div className={`${Style.slot} col-md-4 d-flex m-1 py-1`}>
                                         <p>start: {slot.startTime} </p>
                                         <p>end: {slot.endTime}</p>
                                     </div>
                                 ))}
-                                </div>
+                                
+                            </div>
                             {/* </div> */}
+                            
                         </div>    
                     ))
                      :
@@ -116,7 +143,7 @@ return(
             </div>
         </div>
         <div className={`${Style.downcorn}`}>
-        <img src="downcorner4.png" className={`${Style.corner2}`} />
+        <img src="/downcorner4.png" className={`${Style.corner2}`} />
       </div>
     </>
 );

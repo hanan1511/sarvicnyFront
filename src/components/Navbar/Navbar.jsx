@@ -7,7 +7,7 @@ export default function Navbar() {
 
 <nav className={`container-fluid ${Style.navbaro} navbar-dark navbar navbar-expand-lg bg-main`}>
   <div className="container">
-    <Link className="navbar-brand" to="/home"><img src="nocurve.png" className={`${Style.imgo}`}/></Link>
+    <Link className="navbar-brand" to="/home"><img src="/nocurve.png" className={`${Style.imgo}`}/></Link>
     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span className="navbar-toggler-icon"></span>
     </button>

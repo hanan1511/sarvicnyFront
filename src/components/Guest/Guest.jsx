@@ -2,6 +2,11 @@ import Style from "./Guest.module.css";
 import { Link } from 'react-router-dom'
 
 function Guest(){
+    const handleGuestClick = () => {
+        localStorage.removeItem('userId');
+        console.log(localStorage.getItem('userId'));
+        // window.location.reload();
+    };
     return(
         <>
         <div className={`${Style.img1}`}>
@@ -72,7 +77,8 @@ function Guest(){
                             <div >
                                 <img src="guest.jpg" alt="guest" width={'auto'} height={'400'} className="w-100  rounded-3 " />
                             </div>
-                            <Link to={'/home'}>
+                            <Link to={'/home'} onClick={handleGuestClick}>
+
                                 <div className={`${Style.overlay} position-absolute`}>
                                 <i class="fa-solid fa-person-circle-question fa-4x mb-2" style={{color: '#14235c;'}}></i>
                                     <p style={{fontSize:'30px'}}>Guest</p>
