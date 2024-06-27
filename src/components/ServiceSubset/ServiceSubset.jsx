@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Style from "./ServiceSubset.module.css";
 import { useParams } from "react-router-dom";
+import Mission from "../Mission/Mission.jsx";
 
 const iconMapping = {
   1: <i className="fa-solid fa-bath fs-1 my-4 text-primary"></i>,
@@ -103,6 +104,7 @@ export default function ServiceSubset() {
           )}
         </div>
       </section>
+      <Mission/>
     </>
   );
 }

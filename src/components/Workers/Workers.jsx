@@ -262,8 +262,9 @@ const Employees = () => {
             </div>
             {filteredWorkers.map((worker) => (
               <div className="col-md-4" key={worker.id}>
-                <div className="border-1 border-black border p-3 rounded-2  h-100">
+                <div className="border-1 border-black border p-3 rounded-2  h-100 position-relative">
                   <div className="text-center fs-1 mb-4">{getRandomIcon()}</div>
+                  <i className="position-absolute top-0 end-0 p-2 fa fa-star text-warning" aria-hidden="true"></i>
                   <div className="d-flex mb-1">
                     <h5>First name:</h5>
                     <h5>{worker.firstName}</h5>
