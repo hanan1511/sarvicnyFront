@@ -7,22 +7,19 @@ import { useAppContext } from"../context/AppContext";
 export default function Cart() {
   const [data,setData]=useState(null);
   let { state } = useLocation();
-  const [userId,setUserId] = useState();
   const navigate = useNavigate();
+  const [paymentMethod, setPaymentMethod] = useState('Paymob');
+  const storedUser = localStorage.getItem('userId');
   const [product,setProduct]=useState({description:"service",price:0})
   //http://localhost:3000/
   //const { userId, setUserId } = useAppContext();
 
 //const cutomerID="0b6fba5d-d77f-4861-9799-899446cfd711";
 const [summtion,setSum]=useState(0);
-console.log(userId);
 
-useEffect(()=>{
-    
-  const storedUser = localStorage.getItem('userId');
+useEffect(()=>{ 
   if (storedUser) {
-    setUserId(JSON.parse(storedUser));
-    getCart(JSON.parse(storedUser));
+    getCart(storedUser);
   }
   
 },[]);
@@ -44,7 +41,7 @@ async function getCart(userId){
 }
 
   async function remove(id){
-    const response= await axios.post(`https://localhost:7188/api/Customer/removeFromCart?customerId=${userId}&requestId=${id}`);
+    const response= await axios.post(`https://localhost:7188/api/Customer/removeFromCart?customerId=${storedUser}&requestId=${id}`);
     if(!response.data.isError){
       alert("the order removed from the cart");
       window.location.reload();
@@ -55,8 +52,16 @@ async function getCart(userId){
   }
 
 
-  function handelButton(){
-    navigate('/checkout',{state:{userId:userId,product:product}});
+  async function handelButton(){
+    console.log('Selected payment method:', paymentMethod);
+    const resp = await axios.post(`https://localhost:7188/api/Customer/orderCart?customerId=${storedUser}&paymentMethod=${paymentMethod}`);
+    if(!resp.isError){
+      window.alert("The order is sent to the provider successfully");
+      localStorage.removeItem("addedServices");
+      console.log("sub"+localStorage.getItem("addedServices"))
+      window.location.reload();
+    }
+    // navigate('/checkout',{state:{userId:storedUser,product:product}});
   }
   return (
     <>
@@ -78,16 +83,21 @@ async function getCart(userId){
                   >
                     <h3 className={`${Style.text3}`}>Service</h3>
                     <h3 className={`${Style.text3}`}>Provider</h3>
+                    <h3 className={`${Style.text3}`}>Adderss</h3>
+                    <h3 className={`${Style.text3}`}>District</h3>
                     <h3 className={`${Style.text3}`}>Price</h3>
-                    <h3 className={`${Style.text3}`}>Action</h3>
+                    <h3 className={`${Style.text3}`}>Delete</h3>
                   </div>
                   {data.map((ele) => (
                     <div className="d-flex justify-content-evenly bg-white  p-3 rounded-1" key={ele.serviceRequestID}>
-                      <h3 className={`${Style.text3}`}>{ele.serviceName}</h3>
+                      <h3 className={`${Style.text3}`}>{ele.services[0].parentServiceName}</h3>
                       <h3 className={`${Style.text3}`}>{ele.firstName}</h3>
+                      <h3 className={`${Style.text3}`}>{ele.address}</h3>
+                      <h3 className={`${Style.text3}`}>{ele.districtName}</h3>
                       <h3 className={`${Style.text3}`}>{ele.price}</h3>
+                      
                       <h3 className={`${Style.text3}`}>
-                        <button className="border-0 rounded-1" onClick={() => handelDelete(ele.serviceRequestID)}>
+                        <button className="border-0 rounded-1" onClick={() => handelDelete(ele.cartServiceRequestID)}>
                           <i className="fa-solid fa-xmark"></i>
                         </button>
                       </h3>
@@ -110,9 +120,18 @@ async function getCart(userId){
                     <p className={`${Style.text3}`}>Total</p>
                     <span className={`${Style.text3}`}>{summtion}</span>
                   </div>
+                  <div className={`p-3 d-flex justify-content-between bg-white`}>
+                    <label htmlFor="paymentMethod"  className={`${Style.text3}`} > Payment method</label>
+                    <select  className={`${Style.text3}`} name="paymentMethod" id="payment" value={paymentMethod} 
+          onChange={(e) => setPaymentMethod(e.target.value)}>
+                    <option  className={`${Style.text3}`} value="Paymob">Paymob</option>
+                    <option  className={`${Style.text3}`} value="Paypal">Paypal</option>
+                    <option  className={`${Style.text3}`} value="Cash">Cash</option>
+                  </select>
+                  </div>
                   <div className="bg-white p-3">
                     <button className="btn rounded-1 bg-black text-white fw-bolder w-100" onClick={()=>handelButton()}>
-                      Proceed to Checkout
+                      Order cart
                     </button>
                   </div>
                 </div>

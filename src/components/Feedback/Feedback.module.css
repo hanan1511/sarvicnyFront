@@ -1,0 +1,8 @@
+.emoji-btn {
+    font-size: 24px; /* Initial size of emoji buttons */
+    transition: transform 0.3s ease; /* Smooth transition effect */
+  }
+  
+  .emoji-btn.selected {
+    font-size: 36px; /* Larger size for selected emoji */
+  }

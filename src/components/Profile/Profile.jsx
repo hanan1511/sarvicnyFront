@@ -3,10 +3,12 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useAppContext } from"../context/AppContext";
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 export default function Profile(){
-    const userId  = localStorage.getItem('userId');
+    let userId  = localStorage.getItem('userId');
+    // userId = userId.replace(/"/g, '');
+    console.log(userId);
     const [error, seterror] = useState(null);
     const [profile,setProfile]= useState(null);
     const [avail,setAvail]=useState(null);
@@ -64,12 +66,12 @@ return(
                             
                             <div className={`${Style.cards} container position-relative`}>
 
-                                {/* <FontAwesomeIcon 
-                                    // icon={faTimes} 
+                                <FontAwesomeIcon 
+                                    icon={faTimes} 
                                     className={`position-absolute ${Style.icondel}`} 
                                     style={{ top: '10px', right: '10px', cursor: 'pointer' }}  
                                     onClick={() => handleDelete(elem.providerAvailabilityID)} 
-                                /> */}
+                                />
                             
                                 <h5 className="text-center mt-3 col-md-12">{elem.dayOfWeek}</h5>
                                 {/*<p className="text-center col-md-12">{elem.availabilityDate.substring(0,10)}</p>

@@ -1,19 +1,38 @@
 import React from 'react';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-
+import axios from "axios";
+import { useLocation } from 'react-router-dom';
 const MySwal = withReactContent(Swal);
 
-const FeedbackForm = () => {
+const FeedbackForm = ({orderid}) => {
   let selectedRating = null;
-
-  const handleFeedback = (rating, feedbackText) => {
-    console.log(rating, feedbackText);
-    MySwal.fire({
-      icon: rating >= 4 ? 'success' : 'info',
-      title: 'Thank you for your feedback!',
-      text: `You selected ${rating} out of 5\n\nAdditional feedback: ${feedbackText}`,
-    });
+  const location = useLocation();
+  let api= ``;
+  if(location.pathname=="/ordersCust"){
+    api = `https://localhost:7188/api/Customer/addCustomerRating/${orderid}`
+  }else if(location.pathname=="/provider/reqdetail"){
+     api = `https://localhost:7188/api/ServiceProvider/addProviderRating/${orderid}`
+  }
+  const handleFeedback = async (rating, feedbackText) => {
+    const values={
+      rate:rating,
+      comment:feedbackText
+    } 
+    if(api!=``){
+      const resp = await axios.post(api,values).catch((err)=>(
+        console.log(err.response.data.message)
+      ));
+      console.log(rating, feedbackText,orderid);
+      if(resp){
+        MySwal.fire({
+          icon: rating >= 4 ? 'success' : 'info',
+          title: 'Thank you for your feedback!',
+          text: `You selected ${rating} out of 5\n\nAdditional feedback: ${feedbackText}`,
+        });
+      }
+    }
+    
   };
 
   const showFeedbackPopup = () => {

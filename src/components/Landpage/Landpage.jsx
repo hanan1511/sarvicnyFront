@@ -10,13 +10,13 @@ function Landpage(){
     let navigate = useNavigate();
     const [selectedRow, setSelectedRow] = useState(null);
     const [orders,setOrders]=useState(null);
-    const {userId} = useAppContext();
+    const userId = localStorage.getItem('userId');
     console.log(userId);
     //const workerid="529dba94-89a1-46a4-bdc1-da5f39e6d7c2";
     const fetchData = async () => {
         try {
             const response = await axios.get(
-                `https://localhost:7188/api/ServiceProvider/getAllOrders?providerID=${userId}`
+                `https://localhost:7188/api/ServiceProvider/getAllOrdersForProvider?providerID=${userId}`
             );
             setOrders(response.data.payload);
             console.log(response.data);
@@ -37,7 +37,7 @@ function Landpage(){
     const handleRowClick = (rowData) => {
         console.log('Clicked Row Data:', rowData);
         const id=rowData.orderId;
-        navigate(`/worker/reqdetail`,{ state: { id } });
+        navigate(`/provider/reqdetail`,{ state: { id } });
     };
 
     const flattenNestedData = (data) => {
@@ -48,14 +48,14 @@ function Landpage(){
           flatOrder['customerFN'] = order.payload.customerFN;
           flatOrder['orderStatus'] = order.payload.orderStatus;
           flatOrder['orderPrice'] = order.payload.orderPrice;
+          flatOrder['startTime'] = order.payload.startTime;
           if (order.payload.orderService && order.payload.orderService.length > 0) {
             const service = order.payload.orderService[0];
             flatOrder['serviceID'] = service.serviceID;
-            flatOrder['serviceName'] = service.serviceName;
+            flatOrder['serviceName'] = service.parentServiceName;
             flatOrder['criteriaID'] = service.criteriaID;
             flatOrder['criteriaName'] = service.criteriaName;
             flatOrder['slotID'] = service.slotID;
-            flatOrder['startTime'] = service.startTime;
             flatOrder['servicePrice'] = service.price;
           }
           return flatOrder;

@@ -22,16 +22,16 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  const [userId, setUserId] = useState(() => {
+  let [userId, setUserId] = useState(() => {
     // Retrieve userId from localStorage if it exists
-    const storedUserId = localStorage.getItem('userId');
-    return storedUserId ? JSON.parse(storedUserId) : null;
+    return localStorage.getItem('userId') || null;
   });
 
   useEffect(() => {
     // Store userId in localStorage whenever it changes
     if (userId) {
-      localStorage.setItem('userId', JSON.stringify(userId));
+      userId = userId.toString().replace(/"/g, '');
+      localStorage.setItem('userId', userId);
     } else {
       localStorage.removeItem('userId');
     }
@@ -45,3 +45,4 @@ export const AppProvider = ({ children }) => {
 };
 
 export const useAppContext = () => useContext(AppContext);
+

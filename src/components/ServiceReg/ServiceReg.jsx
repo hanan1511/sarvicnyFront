@@ -268,11 +268,11 @@ function ServicReg() {
   });
   const location = useLocation();
   let workerId = location.state?.workerIdProp;
-  console.log("id", workerId);
+  workerId="8e96ab73-240d-452d-b888-ea4fb8e88ef7";
   if (!workerId) {
-    workerId = "a9954788-6b1f-4deb-b262-66718c0fd89e";
+    workerId = localStorage.getItem('userId');
   }
-
+  console.log("id", workerId);
   async function registerForm() {
     setIsLoading(true);
     try {

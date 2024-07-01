@@ -56,6 +56,8 @@ import { OrdersCust } from "./components/orders/Orders.jsx";
 import { AppProvider } from "./components/context/AppContext.jsx";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import CustomerProfile from "./components/customerProfile/customerProfile.jsx";
+import ServiceSubset from "./components/ServiceSubset/ServiceSubset.jsx";
+import Feedback from "./components/Feedback/FeedbackForm.jsx";
 let routers = createBrowserRouter([
   {
     path: "/admin",
@@ -113,6 +115,7 @@ let routers = createBrowserRouter([
       { path: "customerProfile", element: <CustomerProfile /> },
       { path: "checkout", element: <Checkout /> },
       { path: "criteria/:id", element: <ServicesCriteria /> },
+      { path: "subservice", element: <ServiceSubset /> },
       { path: "service", element: <ServiceDescription /> },
       { path: "workers", element: <Workers /> },
       { path: "pay", element: <ResponsePage /> },
