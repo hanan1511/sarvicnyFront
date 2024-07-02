@@ -53,11 +53,12 @@ return(
     <div className="container justify-content-center">
         <div className={`row d-flex justify-content-center align-item-center mb-5 ${Style.headers}`}>
             <div className="col-md-12">
-                    <p className={`${Style.bigHead}`}>PROFILE</p>
-                    <p className={`${Style.smallHead}`}>PROFILE</p>
-                    <p className={`${Style.desc}`}>See all your profile details</p>
-              </div>
+                <p className={`${Style.bigHead}`}>PROFILE</p>
+                <p className={`${Style.smallHead}`}>PROFILE</p>
+                <p className={`${Style.desc}`}>See all your profile details</p>
+            </div>
         </div>
+        
             <div className={`${Style.formCont} col-md-12 `}>
                 <div className="col-md-5">
                     {avail?

@@ -3,16 +3,40 @@
   font-family: "Poppins", sans-serif;
 }
 
-.subset {
-  background-color: #f3f4f6;
-  font-family: "Poppins", sans-serif;
+.bigHead{
+  margin-top: 50px;
+  color: rgba(108, 107, 108, 0.299);
+  font-size: 70px;
+  text-align: center;
+  font-weight: 500;
   position: relative;
 }
+.smallHead{
+  color: black;
+  font-size: 40px;
+  text-align: center;
+  font-weight: 500;
+  margin-top: -93px;
+  margin-left: -5px;
+  /*position: ;*/
+}
+.desc{
+  color: rgba(108, 107, 108, 0.299);
+  font-size: 20px;
+  text-align: center;
+  font-weight: 500;
+}
 
-.subset i {
-  position: absolute;
-  top: 8px; /* Adjust if needed */
-  right: 8px; /* Adjust if needed */
-  color: red;
-  cursor: pointer;
+.btnMainprof {
+  background-color: #038e42;
+  color: white;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.btnMainprof:hover {
+  background-color: #038e42;
+  color: black;
+  font-weight: 700;
+  font-size: 18px;
 }

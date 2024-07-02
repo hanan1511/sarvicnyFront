@@ -121,6 +121,7 @@ let routers = createBrowserRouter([
       { path: "pay", element: <ResponsePage /> },
       { path: "status", element: <Box /> },
       { path: "ordersCust", element: <OrdersCust /> },
+      { path: "custProfile", element: <CustomerProfile/> },
       { index: "*", element: <Notfound /> },
       
     ],
