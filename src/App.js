@@ -56,6 +56,8 @@ import { OrdersCust } from "./components/orders/Orders.jsx";
 import { AppProvider } from "./components/context/AppContext.jsx";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import CustomerProfile from "./components/customerProfile/customerProfile.jsx";
+import CancledOrders from "./pages/CancledOrders.jsx";
+import SuggestedWorker from "./pages/SuggestedWorker.jsx";
 let routers = createBrowserRouter([
   {
     path: "/admin",
@@ -81,6 +83,8 @@ let routers = createBrowserRouter([
       { path: "criteria", element: <Criteria /> },
       { path: "reqdet", element: <RequestDet /> },
       { path: "service Providers", element: <Providers /> },
+      { path: "canceledOrders", element: <CancledOrders/> },
+      { path: "suggestedWorkers", element: <SuggestedWorker/> },
       { path: "service", element: <Service /> },
       { path: "orderdet", element: <OrderDet /> },
       { path: "*", element: <Notfound /> },
