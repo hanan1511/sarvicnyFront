@@ -27,8 +27,9 @@ export default function Navbar() {
           <Link className="nav-link active" to="/cart">cart</Link>
         </li>
         <li className="nav-item">
-          <Link className="nav-link active" to="#">Services</Link>
+          <Link className="nav-link active" to="/custProfile">Profile</Link>
         </li>
+
       </ul>
 
     </div>

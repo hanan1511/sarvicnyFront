@@ -5,23 +5,37 @@ import Mission from "../Mission/Mission.jsx";
 import { useNavigate,useLocation,useParams,Link } from "react-router-dom";
 import { useState,useEffect } from "react";
 import axios from "axios";
+import Guest from './../Guest/Guest';
 export default function    ServicesCriteria() {
   // const location = useLocation();
   //   const id = location.state?.id;
   const { id } = useParams();
   const [services,setService]=useState(null);
+  
   console.log("in criteriaservice",id);
 
-  async function getServices(){
-    const response=await axios.get(`https://localhost:7188/api/Criteria/${id}`);
-    setService(response.data.payload);
+  // async function getServices(){
+  //   const response=await axios.get(`https://localhost:7188/api/Criteria/${id}`);
+  //   setService(response.data.payload);
+  // }
+
+  async function getParent() {
+    try {
+      const res = await axios.get(`https://localhost:7188/api/services/GetAllParentServices`);
+      const filteredServices = res.data.payload.filter(service => service.criteriaID === id);
+      setService(filteredServices);
+    } catch (error) {
+      console.error('Error fetching parent services:', error);
+    }
   }
 
   useEffect(() => {
     if (id) {
-        getServices();
+      // getServices();
+      getParent();
     }
-}, [id]);
+  }, [id]);
+
   return (
     <>
       <section className={`p-5 ${Style.services}`}>
@@ -32,9 +46,9 @@ export default function    ServicesCriteria() {
                 <h1 className="fw-bolder fs-1">{services.criteriaName}</h1>
               </div>
             </div>
-            {console.log(services.services)}
-            {services.services.map((service) => (
-              <Link to="/service"
+            {console.log(services)}
+            {services.map((service) => (
+              <Link to="/subservice"
                 state={{ service: service,
                 criteraName:services.criteriaName }}  // Pass the service object in the state
               >

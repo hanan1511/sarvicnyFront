@@ -41,13 +41,14 @@
 }
 .feilds{
     font-weight: 400;
-    margin-top: -18px;
+    /* margin-top: -18px; */
     font-size: 18px;
 }
+
 .values{
     text-align:end;
     font-weight: 400;
-    margin-top: -18px;
+    /* margin-top: -18px; */
     font-size: 18px;
 }
 .head{
@@ -92,7 +93,7 @@
 .canceldes{
     border-radius: 3px;
     border-style: none;
-    background-color:rgba(254, 68, 68, 0.344) ;
+    background-color:rgba(1, 1, 1, 0.746) ;
     color: white;
     height: 35px;
     font-weight: 600;

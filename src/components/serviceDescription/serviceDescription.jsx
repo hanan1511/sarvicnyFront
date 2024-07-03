@@ -13,7 +13,8 @@ export default function ServiceDescription() {
   const [error,setError]= useState();
   const navigate=useNavigate();
   console.log("id",userId);
-  console.log(state.criteraName);
+  console.log(state.criteria);
+  console.log(state.services);
   function handelButton(){
     if(!userId){
       setError("Please login first to complete this action!");
@@ -23,7 +24,7 @@ export default function ServiceDescription() {
     }else if(!desc){
       alert("please write the problem description")
     }else{
-      navigate('/workers',{state:{id:state.service.serviceID,name:state.service.serviceName,desc:desc}})
+      navigate('/workers',{state:{services:state.services,desc:desc}})
     }
   }
 
@@ -37,12 +38,12 @@ export default function ServiceDescription() {
             </div>
             <div className="col-md-5 offset-md-1 offset-0 mt-md-0 mt-3">
               <div className=" border-1 border-black border-bottom pb-4">
-                <h4 className="fs-5 fw-light my-2">{state.criteraName}</h4>
-                <h1 className="fs-1">{state.service.serviceName}</h1>
+                <h4 className="fs-5 fw-light my-2">{state.criteria}</h4>
+                <h1 className="fs-1">{state.parent}</h1>
                 {/* <h5 className={`my-4 ${Style.price}`}>$12.00</h5> */}
-                <p className={`${Style.para}`}>
+                {/* <p className={`${Style.para}`}>
                   {state.service.description}
-                </p>
+                </p> */}
                 <label htmlFor="desc" className="form-label mt-5 font-weight-bold">Write the Problem description</label>
                 <textarea type="text" name="desc" id="desc" className="form-control mb-5" onBlur={(e) => setDescription(e.target.value)}></textarea>
                 <button className="btn text-white bg-black rounded-0 fw-medium rounded-1" onClick={()=>handelButton()}>
@@ -52,7 +53,7 @@ export default function ServiceDescription() {
               </div>
               <div className="my-4">
                 <h2 className={`${Style.texto}`}>
-                  <span>Category </span> {state.criteraName}{" "}
+                  <span>Category </span> {state.criteria}{" "}
                   <span>Collection </span>Shop
                 </h2>
               </div>

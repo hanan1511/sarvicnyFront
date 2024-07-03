@@ -27,7 +27,8 @@ export default function LoginCustomer() {
     if (!data.isError) {
       setIsLoading(false);
       setUserId(data.payload.id);
-      localStorage.setItem('userId', JSON.stringify(data.payload.id));
+      localStorage.setItem('userId', data.payload.id);
+      console.log("id in log: "+localStorage.getItem('userId'));
       if(data.payload.role=="Customer"){
         navigate('/home',{state:data.payload.id});
       }else if(data.payload.role=="ServiceProvider"){

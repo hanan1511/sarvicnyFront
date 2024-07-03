@@ -2,77 +2,49 @@ import React, { useState, useEffect } from "react";
 import Style from "./Workers.module.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useAppContext } from "../context/AppContext";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import moment from 'moment';
 
 const Employees = () => {
-  const dummyWorkers = [
-    {
-      id: "worker1",
-      firstName: "John",
-      lastName: "Doe",
-      email: "john.doe@example.com",
-      availabilities: [
-        {
-          dayOfWeek: "Monday",
-          slots: [
-            { timeSlotID: "slot1", startTime: "07:00:00", endTime: "08:00:00" },
-            { timeSlotID: "slot2", startTime: "09:00:00", endTime: "10:00:00" },
-          ],
-        },
-        {
-          dayOfWeek: "Tuesday",
-          slots: [
-            { timeSlotID: "slot3", startTime: "11:00:00", endTime: "12:00:00" },
-          ],
-        },
-      ],
-      district: "District 1",
-    },
-    {
-      id: "worker2",
-      firstName: "Jane",
-      lastName: "Smith",
-      email: "jane.smith@example.com",
-      availabilities: [
-        {
-          dayOfWeek: "Wednesday",
-          slots: [
-            { timeSlotID: "slot4", startTime: "13:00:00", endTime: "14:00:00" },
-          ],
-        },
-      ],
-      district: "District 2",
-    },
-    // More workers...
-  ];
-  
   let { state } = useLocation();
-  console.log(state);
+  const serviceIds = state?.services?.map(service => service.childServiceID) || [];
   const userId = localStorage.getItem('userId');
   const navigate = useNavigate();
-  const [workers, setWorkers] = useState(dummyWorkers); // Using dummy data
+
   const [order, setOrder] = useState(null);
-  const [selectedDay, setSelectedDay] = useState(null);
-  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [selectedDay, setSelectedDay] = useState("");
+  const [selectedSlot, setSelectedSlot] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [filteredWorkers, setFilteredWorkers] = useState([]);
-  const [currentDate, setCurrentDate] = useState("");
-  const [clicked, setClicked] = useState(null);
+  const [workerPrices, setWorkerPrices] = useState({});
+  const [selectedDate, setselectedDate] = useState(new Date());
+  const [district, setDistrict] = useState([]);
 
-  const districts = ["District 1", "District 2", "District 3"];
-  async function addCart(id,values){
-    console.log("in add cart",id);
-    const response= await axios.post(`https://localhost:7188/api/Customer/addtocart?customerId=${id}`,values);
-    if(!response.data.isError){
-      console.log("data ",response.data.payload);
-      setOrder(response.data.payload);
-      navigate('/cart',{state:{order:response.data.payload,id:userId}});
-      //alert("the Order Add to the Cart");
+  async function addCart(values) {
+    try {
+      const response = await axios.post(`https://localhost:7188/api/Customer/addtocart?customerId=${userId}`, values);
+      if (!response.data.isError) {
+        setOrder(response.data.payload);
+        navigate('/cart', { state: { order: response.data.payload, id: userId } });
+      } else {
+        console.log(response.data.errors[0]);
+      }
+    } catch (error) {
+      if (error.response) {
+        console.log("Error data:", error.response.data);
+      }
     }
   }
+
+  async function getDistricts() {
+    const resp = await axios.get(`https://localhost:7188/api/District/getAllAvailableDistricts`);
+    setDistrict(resp.data.payload);
+  }
+
   useEffect(() => {
-    filterWorkers(selectedDay, selectedSlot, selectedDistrict);
-  }, [selectedDay, selectedSlot, selectedDistrict, workers]);
+    getDistricts();
+  }, []);
 
   const handleDayChange = (event) => {
     const selectedDayOfWeek = event.target.value;
@@ -85,77 +57,73 @@ const Employees = () => {
   };
 
   const handleDistrictChange = (event) => {
-    setSelectedDistrict(event.target.value);
+    const selectedDistrictId = event.target.value;
+    setSelectedDistrict(selectedDistrictId);
   };
 
-  function handelButton(worker) {
-    if (!selectedDay) {
-      alert("Must choose suitable day");
-    } else if (!clicked) {
-      alert("Must choose suitable slot");
-    } else if (userId) {
-      const getCurrentDate = () => {
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, "0");
-        const day = String(now.getDate()).padStart(2, "0");
-        const hours = String(now.getHours()).padStart(2, "0");
-        const minutes = String(now.getMinutes()).padStart(2, "0");
-        const seconds = String(now.getSeconds()).padStart(2, "0");
-        const milliseconds = String(now.getMilliseconds()).padStart(3, "0");
-        const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}Z`;
-        return formattedDate;
-      };
+  
 
-      if (!currentDate) {
-        console.log(getCurrentDate());
-        setCurrentDate(getCurrentDate());
-      }
-      const values={
-        providerId:worker.id,
-        serviceIDs:[state.id],
-        slotID:clicked,
-        districtID:"d1adbe94-6ceb-4c84-a72f-5e5637206f42",
-        adderss: "cairo",
-        requestDay:currentDate,
-        problemDescription:state.desc,
-      }
-      console.log("customer", userId);
-      addCart(userId, values);
+  async function handelButton(worker) {
+    if (userId) {
+      const values = {
+        providerId: worker.providerId,
+        serviceIDs: serviceIds,
+        slotID: worker.slotId,
+        districtID: selectedDistrict,
+        requestDay: selectedDate,
+        problemDescription: state.desc,
+      };
+      console.log(values);
+      addCart(values);
     } else {
       alert("user ID is not found please login first");
       navigate("/loginCustomer");
     }
   }
 
-  const filterWorkers = (dayOfWeek, timeSlot, district) => {
-    let filteredData = workers;
+  async function filterWorkers(dayOfWeek, timeSlot, district) {
+    if (district && timeSlot && dayOfWeek) {
+      const values = {
+        services: serviceIds,
+        startTime: timeSlot,
+        dayOfWeek: dayOfWeek,
+        districtId: district,
+        customerId: userId,
+      };
 
-    if (dayOfWeek) {
-      filteredData = filteredData.filter((worker) =>
-        worker.availabilities.some(
-          (availability) => availability.dayOfWeek === dayOfWeek
-        )
-      );
+      const resp = await axios.post(`https://localhost:7188/api/Customer/getAllMatchedProviderSortedbyFav`, values);
+      if (!resp.isError) {
+        console.log(resp);
+        const workers = resp.data.payload;
+        setFilteredWorkers(workers);
+        calculateWorkerPrices(workers);
+      }
     }
+  }
 
-    if (timeSlot) {
-      filteredData = filteredData.filter((worker) =>
-        worker.availabilities.some((availability) =>
-          availability.slots.some(
-            (slot) => slot.startTime <= timeSlot && slot.endTime >= timeSlot
-          )
-        )
-      );
+  const calculateWorkerPrices = async (workers) => {
+    let prices = {};
+    for (let worker of workers) {
+      let sum = 0;
+      for (let serviceprice of worker.services) {
+        sum += serviceprice.price;
+      }
+      prices[worker.providerId] = sum;
     }
+    setWorkerPrices(prices);
+  }
 
-    if (district) {
-      filteredData = filteredData.filter(
-        (worker) => worker.district === district
-      );
+  const handleDateChange = (date) => {
+    if (date) {
+      const localDate = moment(date).format('YYYY-MM-DDTHH:mm:ss.SSS');
+      const isoDate = `${localDate}Z`;
+      setselectedDate(isoDate);
+      console.log(isoDate);
+      const dayOfWeek = moment(date).format('dddd');
+      setSelectedDay(dayOfWeek);
+    } else {
+      setSelectedDay('');
     }
-
-    setFilteredWorkers(filteredData);
   };
 
   const iconsData = [
@@ -169,16 +137,10 @@ const Employees = () => {
     <i className="fa-solid fa-hands"></i>,
     <i className="fa-solid fa-medal"></i>,
   ];
-  
+
   const getRandomIcon = () => {
     const randomIndex = Math.floor(Math.random() * iconsData.length);
     return iconsData[randomIndex];
-  };
-
-  const handleSlotClick = (workerId, slotId) => {
-    console.log("Worker ID:", workerId);
-    console.log("Slot ID:", slotId);
-    setClicked(slotId);
   };
 
   return (
@@ -193,14 +155,21 @@ const Employees = () => {
                 </h2>
               </div>
             </div>
-            <div className="col-md-4 mb-3">
+            <div className="col-md-3 mb-3">
+              <DatePicker
+                selected={selectedDate}
+                onChange={handleDateChange}
+                dateFormat="yyyy-MM-dd"
+              />
+            </div>
+            <div className="col-md-3 mb-3">
               <label htmlFor="dayFilter" className="form-label">
                 Filter by Day:
               </label>
               <select
                 id="dayFilter"
                 className="form-select"
-                value={selectedDay || ""}
+                value={selectedDay}
                 onChange={handleDayChange}
               >
                 <option value="">Select a Day</option>
@@ -213,14 +182,14 @@ const Employees = () => {
                 <option value="Saturday">Saturday</option>
               </select>
             </div>
-            <div className="col-md-4 mb-3">
+            <div className="col-md-3 mb-3">
               <label htmlFor="slotFilter" className="form-label">
                 Filter by Time Slot:
               </label>
               <select
                 id="slotFilter"
                 className="form-select"
-                value={selectedSlot || ""}
+                value={selectedSlot}
                 onChange={handleSlotChange}
               >
                 <option value="">Select a Time Slot</option>
@@ -242,69 +211,52 @@ const Employees = () => {
                 <option value="22:00:00">10:00 PM</option>
               </select>
             </div>
-            <div className="col-md-4 mb-3">
+            <div className="col-md-3 mb-3">
               <label htmlFor="districtFilter" className="form-label">
                 Filter by District:
               </label>
               <select
                 id="districtFilter"
                 className="form-select"
-                value={selectedDistrict || ""}
+                value={selectedDistrict}
                 onChange={handleDistrictChange}
               >
                 <option value="">Select a District</option>
-                {districts.map((district) => (
-                  <option key={district} value={district}>
-                    {district}
+                {district && district.map((distric) => (
+                  <option key={distric.districtID} value={distric.districtID}>
+                    {distric.districtName}
                   </option>
                 ))}
               </select>
             </div>
+            {selectedDay && selectedSlot && selectedDistrict ? (
+              <div className="col-md-3 mb-3">
+                <button className="btn btn-primary" onClick={() => filterWorkers(selectedDay, selectedSlot, selectedDistrict)}>See Workers</button>
+              </div>
+            ) : <></>}
             {filteredWorkers.map((worker) => (
-              <div className="col-md-4" key={worker.id}>
-                <div className="border-1 border-black border p-3 rounded-2  h-100 position-relative">
+              <div className="col-md-4" key={worker.providerId}>
+                <div className="border-1 border-black border p-3 rounded-2 h-100 position-relative">
                   <div className="text-center fs-1 mb-4">{getRandomIcon()}</div>
                   <i className="position-absolute top-0 end-0 p-2 fa fa-star text-warning" aria-hidden="true"></i>
                   <div className="d-flex mb-1">
                     <h5>First name:</h5>
-                    <h5>{worker.firstName}</h5>
+                    <h5>{worker.firstname}</h5>
                   </div>
                   <div className="d-flex align-items-center mb-1">
                     <h5>Last name:</h5>
-                    <h5>{worker.lastName}</h5>
+                    <h5>{worker.lastname}</h5>
                   </div>
                   <div className="d-flex">
                     <h5>Email: </h5>
                     <h5>{worker.email}</h5>
                   </div>
-                  <div>
-                    <h5>Slots: </h5>
-                    <div className="col-md-12  text-dark p-2 d-flex">
-                      {worker.availabilities.map((availability) => (
-                        <div key={availability.dayOfWeek}>
-                          <h5 className="p-1">
-                            Day: {availability.dayOfWeek}
-                          </h5>
-                          {availability.slots.map((slot, index) => (
-                            <div
-                              className={`d-flex  justify-content-between bg-body-tertiary mb-2 p-2 rounded-2 ${clicked === slot.timeSlotID ? Style.clickedSlot : ""}`}
-                              key={index}
-                              onClick={() => handleSlotClick(worker.id, slot.timeSlotID)}
-                            >
-                              <div className="p-2 mx-2">
-                                Start Time: {slot.startTime}
-                              </div>
-                              <div className="p-2">
-                                End Time: {slot.endTime}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      ))}
-                    </div>
+                  <div className="d-flex">
+                    <h5>Total Price of services: </h5>
+                    <h5>{workerPrices[worker.providerId] || 'Loading...'}</h5>
                   </div>
                   <div className="col-md-12">
-                    <button className="btn bg-black text-white fw-bolder text-center w-100 position-relative " onClick={() => handelButton(worker)}>
+                    <button className="btn bg-black text-white fw-bolder text-center w-100 position-relative" onClick={() => handelButton(worker)}>
                       Hire this worker!
                     </button>
                   </div>

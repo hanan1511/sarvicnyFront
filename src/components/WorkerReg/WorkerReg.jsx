@@ -13,19 +13,13 @@ import logo from "../../assets/logo.png";
 function WorkerReg(){
     let navigate = useNavigate();
   const [error, seterror] = useState(null);
-
   const [isLoading, setIsLoading] = useState(false);
   const [districts, setDistricts] = useState([]);
   const [selectedDistricts, setSelectedDistricts] = useState([]);
 
   async function registerForm(values) {
     setIsLoading(true);
-    const response = await axios.post(`https://localhost:7188/api/Worker/register?role=ServiceProvider`, values)
-      .catch((err) => {
-        setIsLoading(false);
-        seterror(err.response.data.message);
-        
-      });
+    const response = await axios.post(`https://localhost:7188/api/Worker/register?role=ServiceProvider`, values);
       console.log(response.data);
       const token = response.data.payload;
       const decodedToken = jwtDecode(token).userId;
@@ -33,28 +27,32 @@ function WorkerReg(){
     console.log(response.data.payload)
 
     if (!response.isError) {
-      for (const district of selectedDistricts) {
-        await axios.post(`https://localhost:7188/api/District/AddDistrict/${decodedToken}?districtID=${district}`);
-      }
+      // for (const district of selectedDistricts) {
+      //   await axios.post(`https://localhost:7188/api/District/AddDistrict/${decodedToken}?districtID=${district}`);
+      // }
       setIsLoading(false);
       navigate("/provider/serviceReg" ,{state: { workerIdProp:decodedToken}});
       //console.log("registerd")
+    }else{
+      setIsLoading(false);
+      seterror(response.errors[0]);
+      console.log(response.errors[0]);
     }
   }
 
-  useEffect(() => {
-    // Fetch the districts data
-    const fetchDistricts = async () => {
-      try {
-        const response = await axios.get('https://localhost:7188/api/District/getAllAvailableDistricts');
-        setDistricts(response.data.payload); // Assuming the districts are in the payload
-      } catch (error) {
-        console.error("Failed to fetch districts", error);
-      }
-    };
+  // useEffect(() => {
+  //   // Fetch the districts data
+  //   const fetchDistricts = async () => {
+  //     try {
+  //       const response = await axios.get('https://localhost:7188/api/District/getAllAvailableDistricts');
+  //       setDistricts(response.data.payload); // Assuming the districts are in the payload
+  //     } catch (error) {
+  //       console.error("Failed to fetch districts", error);
+  //     }
+  //   };
 
-    fetchDistricts();
-  }, []);
+  //   fetchDistricts();
+  // }, []);
 
   const handleCheckboxChange = (event) => {
     const { id, checked } = event.target;

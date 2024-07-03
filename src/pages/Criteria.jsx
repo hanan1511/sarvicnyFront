@@ -39,8 +39,8 @@ export default function Criteria() {
   async function addDistrict() {
     setIsLoading(true);
     try {
-      const response = await axios.post('https://localhost:7188/api/District', { districtName });
-      if (response.data.districtID) {
+      const response = await axios.post(`https://localhost:7188/api/District/AddDistrict?districtName=${districtName}`);
+      if (!response.data.isError) {
         window.alert("District added successfully");
         setShowModal(false);
       } else {
