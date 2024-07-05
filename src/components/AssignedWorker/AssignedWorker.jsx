@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import Style from "./Workers.module.css";
+import Style from "./AssignedWorker.module.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from 'moment';
 
-const Employees = () => {
+const AssignedWorker = () => {
   let { state } = useLocation();
   const serviceIds = state?.services?.map(service => service.childServiceID) || [];
   const userId = localStorage.getItem('userId');
@@ -156,11 +156,11 @@ const Employees = () => {
               </div>
             </div>
             <div className="col-md-3 mb-3">
-                <DatePicker
-                  selected={selectedDate}
-                  onChange={handleDateChange}
-                  dateFormat="yyyy-MM-dd"
-                />
+              <DatePicker
+                selected={selectedDate}
+                onChange={handleDateChange}
+                dateFormat="yyyy-MM-dd"
+              />
             </div>
             <div className="col-md-3 mb-3">
               <label htmlFor="dayFilter" className="form-label">
@@ -256,9 +256,14 @@ const Employees = () => {
                     <h5>{workerPrices[worker.providerId] || 'Loading...'}</h5>
                   </div>
                   <div className="col-md-12">
-                    <button className="btn bg-black text-white fw-bolder text-center w-100 position-relative" onClick={() => handelButton(worker)}>
-                      Hire this worker!
+                    <div className=" d-flex justify-content-between">
+                    <button className="btn bg-success text-white fw-bolder w-50 text-center  position-relative" >
+                    Accept
                     </button>
+                    <button className="btn bg-danger text-white fw-bolder w-50  text-center  position-relative">
+                    cancel
+                    </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -270,4 +275,4 @@ const Employees = () => {
   );
 };
 
-export default Employees;
+export default AssignedWorker;

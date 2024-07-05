@@ -60,6 +60,7 @@ import ServiceSubset from "./components/ServiceSubset/ServiceSubset.jsx";
 import Feedback from "./components/Feedback/FeedbackForm.jsx";
 import CancledOrders from "./pages/CancledOrders.jsx";
 import SuggestedWorker from "./pages/SuggestedWorker.jsx";
+import AssignedWorker from "./components/AssignedWorker/AssignedWorker.jsx";
 let routers = createBrowserRouter([
   {
     path: "/admin",
@@ -122,6 +123,7 @@ let routers = createBrowserRouter([
       { path: "subservice", element: <ServiceSubset /> },
       { path: "service", element: <ServiceDescription /> },
       { path: "workers", element: <Workers /> },
+      { path: "reAssignedWorker", element: <AssignedWorker/> },
       { path: "pay", element: <ResponsePage /> },
       { path: "status", element: <Box /> },
       { path: "ordersCust", element: <OrdersCust /> },
