@@ -5,6 +5,7 @@ import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from 'moment';
+import Swal from 'sweetalert2';
 
 const Employees = () => {
   let { state } = useLocation();
@@ -15,7 +16,7 @@ const Employees = () => {
   const [order, setOrder] = useState(null);
   const [selectedDay, setSelectedDay] = useState("");
   const [selectedSlot, setSelectedSlot] = useState("");
-  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [filteredWorkers, setFilteredWorkers] = useState([]);
   const [workerPrices, setWorkerPrices] = useState({});
   const [selectedDate, setselectedDate] = useState(new Date());
@@ -61,20 +62,50 @@ const Employees = () => {
     setSelectedDistrict(selectedDistrictId);
   };
 
-  
-
   async function handelButton(worker) {
     if (userId) {
-      const values = {
-        providerId: worker.providerId,
-        serviceIDs: serviceIds,
-        slotID: worker.slotId,
-        districtID: selectedDistrict,
-        requestDay: selectedDate,
-        problemDescription: state.desc,
-      };
-      console.log(values);
-      addCart(values);
+      Swal.fire({
+        title: 'Do you want to add a different address?',
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: `Yes`,
+        denyButtonText: `No`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'Enter your new address:',
+            input: 'text',
+            inputLabel: 'New Address',
+            inputPlaceholder: 'Enter your new address',
+            showCancelButton: true,
+          }).then((addressResult) => {
+            if (addressResult.isConfirmed && addressResult.value) {
+              const values = {
+                providerId: worker.providerId,
+                serviceIDs: serviceIds,
+                slotID: worker.slotId,
+                districtID: selectedDistrict,
+                requestDay: selectedDate,
+                problemDescription: state.desc,
+                address: addressResult.value
+              };
+              console.log(values);
+              addCart(values);
+            }
+          });
+        } else if (result.isDenied) {
+          const values = {
+            providerId: worker.providerId,
+            serviceIDs: serviceIds,
+            slotID: worker.slotId,
+            districtID: selectedDistrict,
+            requestDay: selectedDate,
+            problemDescription: state.desc,
+          };
+          console.log(values);
+          addCart(values);
+        }
+      });
     } else {
       alert("user ID is not found please login first");
       navigate("/loginCustomer");
@@ -82,18 +113,19 @@ const Employees = () => {
   }
 
   async function filterWorkers(dayOfWeek, timeSlot, district) {
-    if (district && timeSlot && dayOfWeek) {
+    if (timeSlot && dayOfWeek) {
       const values = {
         services: serviceIds,
         startTime: timeSlot,
         dayOfWeek: dayOfWeek,
-        districtId: district,
         customerId: userId,
+        ...(district && { districtId: district })
       };
-
+      console.log("data", values);
       const resp = await axios.post(`https://localhost:7188/api/Customer/getAllMatchedProviderSortedbyFav`, values);
       if (!resp.isError) {
         console.log(resp);
+
         const workers = resp.data.payload;
         setFilteredWorkers(workers);
         calculateWorkerPrices(workers);
@@ -156,7 +188,13 @@ const Employees = () => {
               </div>
             </div>
             <div className="col-md-3 mb-3">
+              <label htmlFor="selectdate" className="form-label">
+                Select Date:
+              </label>
+              <br/>
                 <DatePicker
+                  id = "selectdate"
+                  className="form-select col-md-3 mb-3"
                   selected={selectedDate}
                   onChange={handleDateChange}
                   dateFormat="yyyy-MM-dd"
@@ -229,7 +267,7 @@ const Employees = () => {
                 ))}
               </select>
             </div>
-            {selectedDay && selectedSlot && selectedDistrict ? (
+            {selectedDay && selectedSlot ? (
               <div className="col-md-3 mb-3">
                 <button className="btn btn-primary" onClick={() => filterWorkers(selectedDay, selectedSlot, selectedDistrict)}>See Workers</button>
               </div>

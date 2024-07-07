@@ -2,6 +2,7 @@ import Style from "./ReqDetails.module.css";
 import axios from "axios";
 import { useLocation } from 'react-router-dom';
 import React, { useState, useEffect } from "react";
+import FeedbackForm from "../Feedback/FeedbackForm";
 import { Link, useNavigate } from "react-router-dom";
 
 function ReqDetails(){
@@ -11,11 +12,11 @@ function ReqDetails(){
     const [loading,setLoading]=useState(true);
     const[cancel,setCancel]=useState(false);
     const [complet,setComplete]=useState(false);
-    
     const location = useLocation();
     let navigate = useNavigate();
     let id = location.state?.id || "";
     console.log(id);
+    const api = `https://localhost:7188/api/ServiceProvider/setOrderStatus?orderId=${id}&status=`;
     const [buttonStates, setButtonStates] = useState({
         button1: false,
         button2: true,
@@ -41,7 +42,7 @@ function ReqDetails(){
             setComplete(true);
     }
     const pressdoneHandel= async()=>{
-        const resp = await axios.post(`https://localhost:7188/api/ServiceProvider/setOrderStatus?orderId=${id}&status=Done`).catch((err) => {
+        const resp = await axios.post(`${api}Done`).catch((err) => {
             seterror(err.response.data.message);
             });
         if(!resp.isError){
@@ -68,7 +69,9 @@ function ReqDetails(){
                 orderDate: response.data.payload.orderDate,
                 startTime: response.data.payload.startTime,
                 criteriaName:response.data.payload.orderService[0].criteriaName,
-                orderService: response.data.payload.orderService // Keep the orderService array as is
+                orderService: response.data.payload.orderService,
+                providerRate: response.data.payload.providerRate
+                 // Keep the orderService array as is
               }
             setLoading(false);
             setOrder(flatOrder);
@@ -77,9 +80,11 @@ function ReqDetails(){
                 case "Completed":
                 case "Done":
                     setComplete(true);
+                    doneHandel();
                     break;
                 case "Canceled":
                     setCancel(true);
+                    doneHandel();
                     break;
                 case "Start":
                     startHandel();
@@ -94,7 +99,6 @@ function ReqDetails(){
                     progressHandel();
                     break;
                 case "CanceledByProvider":
-                case "Canceled":
                     setCancel(true);
                     break;
                 default:
@@ -204,18 +208,18 @@ function ReqDetails(){
     }
 
     const pressstartHandel=async ()=>{
-        const resp = await axios.post(`https://localhost:7188/api/ServiceProvider/setOrderStatus?orderId=${id}&status=Start`).catch((err) => {
+        const resp = await axios.post(`${api}Start`).catch((err) => {
             seterror(err.response.data.message);
             });
-        if(!resp.isError){
+        if(resp){
             window.alert("you started the order"); 
-           startHandel();
+            startHandel();
         }
 
     }
 
     const pressprepareHandel=async ()=>{
-        const resp = await axios.post(`https://localhost:7188/api/ServiceProvider/setOrderStatus?orderId=${id}&status=Preparing`).catch((err) => {
+        const resp = await axios.post(`${api}Preparing`).catch((err) => {
             seterror(err.response.data.message);
             });
         if(!resp.isError){
@@ -225,7 +229,7 @@ function ReqDetails(){
     }
 
     const presswayHandel=async ()=>{
-        const resp = await axios.post(`https://localhost:7188/api/ServiceProvider/setOrderStatus?orderId=${id}&status=OnTheWay`).catch((err) => {
+        const resp = await axios.post(`${api}OnTheWay`).catch((err) => {
             seterror(err.response.data.message);
             });
         if(!resp.isError){
@@ -235,7 +239,7 @@ function ReqDetails(){
     }
 
     const pressprogressHandel=async ()=>{
-        const resp = await axios.post(`https://localhost:7188/api/ServiceProvider/setOrderStatus?orderId=${id}&status=InProgress`).catch((err) => {
+        const resp = await axios.post(`${api}InProgress`).catch((err) => {
             seterror(err.response.data.message);
             });
         if(!resp.isError){
@@ -343,7 +347,7 @@ function ReqDetails(){
                             <p>{order.problemDescription}</p>
                         </div>
                     </div>
-                    { !cancel ?
+                    { !cancel && !complet ?
                     <>
                     <div className={`row d-flex justify-content-center align-items-center py-1 `}>
                         <button disabled={cancel}  className={`col-md-3 ${complet ? Style.canceldes : Style.cancel } `} onClick={handleCancel}>
@@ -352,7 +356,13 @@ function ReqDetails(){
                     </div>
                     {error == null ? '' : <div className="alert alert-danger">{error}</div>}
                     </>
-                    :<></>
+                    : complet && order.providerRate==null ?
+                        <div className={`row d-flex justify-content-center align-items-center py-1 `}>
+                            <button className={`col-md-3  border bg-success rounded-1 ${Style.but} `}>
+                                <FeedbackForm orderid={order.orderId}/> 
+                            </button>
+                        </div>
+                        :<></>
                     }
                 </div>
             </div>

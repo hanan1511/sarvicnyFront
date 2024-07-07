@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   useTable,
   useSortBy,
@@ -7,142 +7,87 @@ import {
 } from "react-table";
 import Header from "../components/Header.jsx";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const CanceledOrders = () => {
   let navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [orders, setData] = useState([]);
 
-  // Dummy data
-  const dummyData = [
-    {
-      id: 1,
-      district: "District 1",
-      customerName: "John Doe",
-      workerName: "Jane Smith",
-      orderId: "ORD001",
-    },
-    {
-      id: 2,
-      district: "District 2",
-      customerName: "Alice Johnson",
-      workerName: "Bob Brown",
-      orderId: "ORD002",
-    },
-    {
-      id: 4,
-      district: "District 3",
-      customerName: "Charlie Green",
-      workerName: "Dave White",
-      orderId: "ORD003",
-    },
-    {
-      id: 5,
-      district: "District 3",
-      customerName: "Charlie Green",
-      workerName: "Dave White",
-      orderId: "ORD003",
-    },
-    {
-      id: 6,
-      district: "District 3",
-      customerName: "Charlie Green",
-      workerName: "Dave White",
-      orderId: "ORD003",
-    },
-    {
-      id: 7,
-      district: "District 3",
-      customerName: "Charlie Green",
-      workerName: "Dave White",
-      orderId: "ORD003",
-    },
-    {
-      id: 8,
-      district: "District 3",
-      customerName: "Charlie Green",
-      workerName: "Dave White",
-      orderId: "ORD003",
-    },
-    {
-      id: 9,
-      district: "District 3",
-      customerName: "Charlie Green",
-      workerName: "Dave White",
-      orderId: "ORD003",
-    },
-    {
-      id: 10,
-      district: "District 3",
-      customerName: "Charlie Green",
-      workerName: "Dave White",
-      orderId: "ORD003",
-    },
-    {
-      id: 11,
-      district: "District 3",
-      customerName: "Charlie Green",
-      workerName: "Dave White",
-      orderId: "ORD003",
-    },
-    {
-      id: 12,
-      district: "District 3",
-      customerName: "Charlie Green",
-      workerName: "Dave White",
-      orderId: "ORD003",
-    },
-    {
-      id: 13,
-      district: "District 3",
-      customerName: "Charlie Green",
-      workerName: "Dave White",
-      orderId: "ORD003",
-    },
-    {
-      id: 14,
-      district: "District 3",
-      customerName: "Charlie Green",
-      workerName: "Dave White",
-      orderId: "ORD003",
-    },
-    {
-      id: 15,
-      district: "District 3",
-      customerName: "Charlie Green",
-      workerName: "Dave White",
-      orderId: "ORD003",
-    },
-    {
-      id: 16,
-      district: "District 3",
-      customerName: "Charlie Green",
-      workerName: "Dave White",
-      orderId: "ORD003",
-    },
-    {
-      id: 17,
-      district: "District 3",
-      customerName: "Charlie Green",
-      workerName: "Dave White",
-      orderId: "ORD003",
-    },
-    {
-      id: 18,
-      district: "District 3",
-      customerName: "Charlie Green",
-      workerName: "Dave White",
-      orderId: "ORD003",
-    },
-  ];
+  async function getCanceled() {
+    try {
+      const resp = await axios.get(`https://localhost:7188/api/Admin/getAllCanceledOrdersByProvider`);
+      if (resp) {
+        console.log(resp.data.payload);
+        setData(resp.data.payload);
+      }
+    } catch (err) {
+      setError(err.response ? err.response.data.message : err.message);
+    }
+  }
 
-  const data = useMemo(() => dummyData, []);
+  const flattenNestedData = (data) => {
+    if (!Array.isArray(data)) {
+      return [];
+    }
+
+    return data.map(order => {
+      const flatOrder = {
+        orderId: order.payload.orderId,
+        orderDate: order.payload.orderDate,
+        orderStatus: order.payload.orderStatus,
+        customerCancelDate: order.payload.customerCancelDate,
+        customerId: order.payload.customerId,
+        customerFN: order.payload.customerFN,
+        customerLastName: order.payload.customerLastName,
+        providerId: order.payload.providerId,
+        providerFN: order.payload.providerFN,
+        providerLN: order.payload.providerLN,
+        orderPrice: order.payload.orderPrice,
+        requestedSlotID: order.payload.requestedSlotID,
+        requestedDay: order.payload.requestedDay,
+        dayOfWeek: order.payload.dayOfWeek,
+        startTime: order.payload.startTime,
+        districtID: order.payload.districtID,
+        districtName: order.payload.districtName,
+        address: order.payload.address,
+        price: order.payload.price,
+        problem: order.payload.problem,
+        providerRating: order.payload.providerRating,
+        providerComment: order.payload.providerComment,
+        customerRating: order.payload.customerRating,
+        customerComment: order.payload.customerComment,
+        orderService: Array.isArray(order.payload.orderService) ? order.payload.orderService.map(service => ({
+          serviceId: service.serviceId,
+          serviceName: service.serviceName,
+          parentServiceID: service.parentServiceID,
+          parentServiceName: service.parentServiceName,
+          criteriaID: service.criteriaID,
+          criteriaName: service.criteriaName,
+          price: service.price
+        })) : []
+      };
+
+      return flatOrder;
+    });
+  };
+
+  useEffect(() => {
+    getCanceled();
+  }, []);
+
+  const data = useMemo(() => flattenNestedData(orders), [orders]);
 
   const columns = useMemo(
     () => [
-      { Header: "District", accessor: "district", sortType: "basic" },
-      { Header: "Customer Name", accessor: "customerName", sortType: "basic" },
-      { Header: "Worker Name", accessor: "workerName", sortType: "basic" },
+      { Header: "District", accessor: "districtName", sortType: "basic" },
+      { Header: "Customer Name", accessor: "customerFN", sortType: "basic" },
+      { Header: "Worker Name", accessor: "providerFN", sortType: "basic" },
+      { Header: "Price", accessor: "orderPrice", sortType: "basic" },
+      { Header: "Start Time", accessor: "startTime", sortType: "basic" },
+      { Header: "Address", accessor: "address", sortType: "basic" },
+      { Header: "Problem", accessor: "problem", sortType: "basic" },
       { Header: "Order ID", accessor: "orderId", sortType: "basic" },
       {
         Header: "Actions",
@@ -151,7 +96,7 @@ const CanceledOrders = () => {
           <div style={{ display: "flex", justifyContent: "center" }}>
             {!row.original.isBlocked && (
               <button
-                onClick={() => handleSuggestions(row.original.id)}
+                onClick={() => handleSuggestions(row.original)}
                 className="btn btn-success"
               >
                 Suggestions
@@ -163,8 +108,9 @@ const CanceledOrders = () => {
     ],
     []
   );
-  const handleSuggestions = (id) => {
-    navigate('/admin/suggestedWorkers', { state: { orderId: id } });
+
+  const handleSuggestions = (orderelected) => {
+    navigate('/admin/suggestedWorkers', { state: { order: orderelected } });
   };
 
   const {

@@ -40,6 +40,14 @@ function Landpage(){
         navigate(`/provider/reqdetail`,{ state: { id } });
     };
 
+    const formatDate = (timestamp) => {
+      const date = new Date(timestamp);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
     const flattenNestedData = (data) => {
         return data.map(order => {
           const flatOrder = { ...order.payload };
@@ -49,6 +57,7 @@ function Landpage(){
           flatOrder['orderStatus'] = order.payload.orderStatus;
           flatOrder['orderPrice'] = order.payload.orderPrice;
           flatOrder['startTime'] = order.payload.startTime;
+          flatOrder['requestedDate']=formatDate(order.payload.requestedDay);
           if (order.payload.orderService && order.payload.orderService.length > 0) {
             const service = order.payload.orderService[0];
             flatOrder['serviceID'] = service.serviceID;
@@ -80,6 +89,7 @@ function Landpage(){
         { field: 'orderPrice', headerText: 'Order Price', width: '200' },
         { field: 'serviceName', headerText: 'Service Name', width: '200' },
         { field: 'criteriaName', headerText: 'Criteria Name', width: '200' },
+        { field: 'requestedDate', headerText: 'Requested Day', width: '200' },
         { field: 'startTime', headerText: 'Start Time', width: '200' },
         { field: 'servicePrice', headerText: 'Service Price', width: '200' },
         {

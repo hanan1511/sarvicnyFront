@@ -268,7 +268,6 @@ function ServicReg() {
   });
   const location = useLocation();
   let workerId = location.state?.workerIdProp;
-  workerId="8e96ab73-240d-452d-b888-ea4fb8e88ef7";
   if (!workerId) {
     workerId = localStorage.getItem('userId');
   }
@@ -393,7 +392,9 @@ function ServicReg() {
     );
 
     if (selectedCriteria) {
-      setServicesList(selectedCriteria.services);
+      // Filter services where parentServiceID is null
+      const filteredServices = selectedCriteria.services.filter(service => service.parentServiceID === null);
+      setServicesList(filteredServices);
     } else {
       setServicesList([]);
     }
@@ -492,7 +493,7 @@ function ServicReg() {
                         <p>No services available for the selected criteria.</p>
                       )}
                     </div>
-                    <div className="col-md-12">
+                    {/* <div className="col-md-12">
                       <h5 className="mt-2">Service Price</h5>
                       <input
                         type="number"
@@ -503,7 +504,7 @@ function ServicReg() {
                         value={formValues.Price}
                         onChange={handleInputChange}
                       />
-                    </div>
+                    </div> */}
 
                     {childServices.length > 0 && (
                       <div className="col-md-12 mt-3">

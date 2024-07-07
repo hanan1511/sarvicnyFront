@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,10 +6,11 @@ import Style from "./RegisterCustomer.module.css";
 import { Audio } from "react-loader-spinner";
 import axios from "axios";
 import logo from "../../assets/logo.png";
+
 export default function LoginCustomer() {
   let navigate = useNavigate();
-  const [error, seterror] = useState(null);
-
+  const [error, setError] = useState(null);
+  const [districts, setDistricts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   async function registerForm(values) {
@@ -21,14 +22,25 @@ export default function LoginCustomer() {
       )
       .catch((err) => {
         setIsLoading(false);
-        seterror(err.response.data.message);
+        setError(err.response.data.message);
       });
-    if (response.status == 200) {
+    if (response && response.status === 200) {
       setIsLoading(false);
-      console.log(response);
       navigate("/loginCustomer");
     }
   }
+
+  useEffect(() => {
+    const fetchDistricts = async () => {
+      try {
+        const response = await axios.get('https://localhost:7188/api/District/getAllAvailableDistricts');
+        setDistricts(response.data.payload); // Assuming the districts are in the payload
+      } catch (error) {
+        console.error("Failed to fetch districts", error);
+      }
+    };
+    fetchDistricts();
+  }, []);
 
   const validationSchema = Yup.object({
     firstName: Yup.string().required("First name is required"),
@@ -41,6 +53,7 @@ export default function LoginCustomer() {
     address: Yup.string()
       .required("Address is required")
       .max(255, "Address is too long"),
+    districtName: Yup.string().required("District is required"),
     password: Yup.string()
       .required("Password is required")
       .min(8, "Password must be at least 8 characters")
@@ -55,11 +68,13 @@ export default function LoginCustomer() {
       firstName: "",
       lastName: "",
       username: "",
-      userType:"Customer",
+      userType: "Customer",
       phoneNumber: "",
       email: "",
       address: "",
+      districtName: "",
       password: "",
+      confirmPassword: "",
     },
     validationSchema,
     onSubmit: registerForm,
@@ -207,6 +222,28 @@ export default function LoginCustomer() {
                         {formik.errors.address}
                       </div>
                     )}
+                  </div>
+
+                  <div className="col-md-12 py-3">
+                    <h5>District</h5>
+                    <select
+                      id="district"
+                      name="districtName"
+                      className="form-control"
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      value={formik.values.districtName}
+                    >
+                      <option value="">Select District</option>
+                      {districts.map((district) => (
+                        <option key={district.districtID} value={district.districtName}>
+                          {district.districtName}
+                        </option>
+                      ))}
+                    </select>
+                    {formik.touched.districtName && formik.errors.districtName ? (
+                      <div className="text-danger">{formik.errors.districtName}</div>
+                    ) : null}
                   </div>
 
                   <div className="col-md-6 py-3">

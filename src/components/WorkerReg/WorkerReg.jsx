@@ -5,54 +5,78 @@ import { Link, useNavigate } from "react-router-dom";
 import Style from "./WorkerReg.module.css";
 import { Audio } from "react-loader-spinner";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode"; // Corrected import for jwtDecode
 import upperCorner2 from "../../assets/upperCorner2.png";
 import upperCorner from "../../assets/upperCorner.png";
 import downCorner from "../../assets/downCorner.png";
 import logo from "../../assets/logo.png";
-function WorkerReg(){
-    let navigate = useNavigate();
+
+function WorkerReg() {
+  let navigate = useNavigate();
   const [error, seterror] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [districts, setDistricts] = useState([]);
   const [selectedDistricts, setSelectedDistricts] = useState([]);
+  const [profileImage, setProfileImage] = useState(null);
+  const [criminalRecord, setCriminalRecord] = useState(null);
 
   async function registerForm(values) {
     setIsLoading(true);
-    const response = await axios.post(`https://localhost:7188/api/Worker/register?role=ServiceProvider`, values);
+    console.log("value",values);
+    console.log("photo",profileImage);
+
+    try {
+      const response = await axios.post(`https://localhost:7188/api/Worker/register?role=ServiceProvider`, values).catch((err)=>{
+    seterror(err.response.data.message)});
       console.log(response.data);
       const token = response.data.payload;
       const decodedToken = jwtDecode(token).userId;
       console.log(decodedToken);
-    console.log(response.data.payload)
+      console.log(response.data.payload);
+      localStorage.setItem('userId', decodedToken);
 
-    if (!response.isError) {
-      // for (const district of selectedDistricts) {
-      //   await axios.post(`https://localhost:7188/api/District/AddDistrict/${decodedToken}?districtID=${district}`);
-      // }
+      if (response) {
+
+        if(profileImage&&criminalRecord){
+          const photo = await axios.post(`https://localhost:7188/api/Worker/uploadFile?fileName=Image&providerId=${decodedToken}`,{base64Image:profileImage}).catch((er)=>{
+            seterror(er.response.data.message);
+          });
+          const criminal = await axios.post(`https://localhost:7188/api/Worker/uploadFile?fileName=CriminalRecord&providerId=${decodedToken}`,{base64Image:criminalRecord}).catch((er)=>{
+            seterror(er.response.data.message);
+          });
+
+          if(criminal&&photo){
+            for (const district of selectedDistricts) {
+              await axios.post(`https://localhost:7188/api/District/AddDistrict/${decodedToken}?districtID=${district}`);
+            }
+            setIsLoading(false);
+            navigate("/provider/serviceReg", { state: { workerIdProp: decodedToken } });
+          }
+        }
+      } else {
+        setIsLoading(false);
+        seterror(response.errors[0]);
+        console.log(response.errors[0]);
+      }
+    } catch (error) {
       setIsLoading(false);
-      navigate("/provider/serviceReg" ,{state: { workerIdProp:decodedToken}});
-      //console.log("registerd")
-    }else{
-      setIsLoading(false);
-      seterror(response.errors[0]);
-      console.log(response.errors[0]);
+      seterror(error.message);
+      console.log(error.message);
     }
   }
 
-  // useEffect(() => {
-  //   // Fetch the districts data
-  //   const fetchDistricts = async () => {
-  //     try {
-  //       const response = await axios.get('https://localhost:7188/api/District/getAllAvailableDistricts');
-  //       setDistricts(response.data.payload); // Assuming the districts are in the payload
-  //     } catch (error) {
-  //       console.error("Failed to fetch districts", error);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchDistricts = async () => {
+      try {
+        const response = await axios.get('https://localhost:7188/api/District/getAllAvailableDistricts');
+        setDistricts(response.data.payload);
+      } catch (error) {
+        console.error("Failed to fetch districts", error);
+      }
+    };
 
-  //   fetchDistricts();
-  // }, []);
+    fetchDistricts();
+  }, []);
 
   const handleCheckboxChange = (event) => {
     const { id, checked } = event.target;
@@ -62,6 +86,34 @@ function WorkerReg(){
       setSelectedDistricts(selectedDistricts.filter((district) => district !== id));
     }
   };
+
+  const handleFileChange = (event) => {
+    const { name, files } = event.target;
+    
+    if (files.length > 0) {
+      const file = files[0];
+      const reader = new FileReader();
+  
+      reader.onload = (e) => {
+        try {
+          const base64String = e.target.result.split(',')[1]; // Extract base64 string (omit data URL prefix)
+          // Validate base64String if needed
+          
+          // Assuming you have state variables like setProfileImage and setCriminalRecord
+          if (name === 'profileImage') {
+            setProfileImage(base64String);
+          } else if (name === 'criminalRecord') {
+            setCriminalRecord(base64String);
+          }
+        } catch (error) {
+          console.error('Error reading file:', error);
+        }
+      };
+  
+      reader.readAsDataURL(file);
+    }
+  };
+  
 
   const validationSchema = Yup.object({
     firstName: Yup.string().required("First name is required"),
@@ -85,9 +137,6 @@ function WorkerReg(){
       .required("National ID is required")
       .max(14, "Wrong Way to write National ID")
       .min(14, "Wrong Way to write National ID"),
-    criminalRecord: Yup.string()
-      .required("Criminal Record is required")
-      .max(255, "criminal is too long"),
   });
 
   const formik = useFormik({
@@ -100,15 +149,15 @@ function WorkerReg(){
       email: "",
       address: "",
       password: "",
-      nationalId:"",
-      criminalRecord:"stringstring"
+      nationalId: ""
     },
-    validationSchema,
+    //validationSchema,
     onSubmit: registerForm,
   });
-    return(
+
+  return (
     <>
-      <div className={`${Style.corners}`} >
+      <div className={`${Style.corners}`}>
         <img src={upperCorner2} className={`${Style.corner3}`} />
         <img src={upperCorner} className={`${Style.corner}`} />
       </div>
@@ -132,12 +181,12 @@ function WorkerReg(){
           </div>
           <div className="row">
             <div className="col-md-6">
-              <img src={logo} className={`${Style.imgo} img-fluid  h-90 `}/>
+              <img src={logo} className={`${Style.imgo} img-fluid  h-90 `} />
             </div>
             {error == null ? (
               ""
-              ) : (
-                   <div className="alert alert-danger">{error}</div>
+            ) : (
+              <div className="alert alert-danger">{error}</div>
             )}
             <div className="col-md-6 p-4">
               <div className={`  ${Style.signUpForm}  p-4 rounded-3`}>
@@ -153,7 +202,7 @@ function WorkerReg(){
                     </li>
                   </ul>
                 </div>
-                <h2 className="fw-bold py-5 text-center" style={{fontSize:'30px'}}>Sign Up</h2>
+                <h2 className="fw-bold py-5 text-center" style={{ fontSize: '30px' }}>Sign Up</h2>
                 <form onSubmit={formik.handleSubmit}>
                   <div className="row">
                     <div className="col-md-6">
@@ -230,7 +279,7 @@ function WorkerReg(){
                           <div className="alert p-2 mt-2 alert-danger">
                             {formik.errors.phoneNumber}
                           </div>
-                      )}
+                        )}
                     </div>
 
                     <div className="col-md-12 py-1">
@@ -290,22 +339,25 @@ function WorkerReg(){
                       )}
                     </div>
 
-                    <div className="col-md-12 py-1">
+                    <div className="col-md-12">
+                      <h5>Profile Image</h5>
+                      <input
+                        type="file"
+                        className="form-control"
+                        id="profileImage"
+                        name="profileImage"
+                        onChange={(event) => handleFileChange(event,"profileImage")}
+                      />
+                    </div>
+                    <div className="col-md-12">
                       <h5>Criminal Record</h5>
                       <input
                         type="file"
-                        className="rounded-2 w-100"
-                        placeholder="Criminal Record"
+                        className="form-control"
                         id="criminalRecord"
                         name="criminalRecord"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
+                        onChange={(event) => handleFileChange(event,"criminalRecord")}
                       />
-                      {formik.errors.criminalRecord && formik.touched.criminalRecord && (
-                        <div className="alert p-2 mt-2 alert-danger">
-                          {formik.errors.criminalRecord}
-                        </div>
-                      )}
                     </div>
 
                     <div className="col-md-12 py-3">
@@ -359,7 +411,7 @@ function WorkerReg(){
                           <div className="alert p-2 mt-2 alert-danger">
                             {formik.errors.confirmPassword}
                           </div>
-                      )}
+                        )}
                     </div>
 
                     <div className="col-md-12 py-3">
@@ -379,7 +431,6 @@ function WorkerReg(){
                         <button
                           type="submit"
                           className={`btn   ${Style.btnMain} w-100`}
-                          disabled={!(formik.isValid && formik.dirty)}
                         >
                           Sign Up
                         </button>
@@ -396,6 +447,7 @@ function WorkerReg(){
         <img src={downCorner} className={`${Style.corner2}`} />
       </div>
     </>
-    );
+  );
 }
+
 export default WorkerReg;

@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from"../context/AppContext";
 import FeedbackForm from "../Feedback/FeedbackForm";
+import Swal from 'sweetalert2';
 export function OrdersCust(){
     const [data,setData]=useState(null);
     const navigate= useNavigate();
@@ -32,9 +33,54 @@ export function OrdersCust(){
             window.alert("you have marked the order done");
         }
     }
-    function handelDelete(id){
-        navigate("/status",{state:userId});
+    
+
+    async function handelCancel(id) {
+    // Show confirmation dialog
+        const confirmResult = await Swal.fire({
+            icon: 'warning',
+            title: 'Are you sure?',
+            text: 'Do you want to cancel this order?',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, cancel it!',
+            cancelButtonText: 'No, keep it'
+        });
+
+        // Check if user confirmed
+        if (confirmResult.isConfirmed) {
+            try {
+                const resp = await axios.post(`https://localhost:7188/api/Customer/cancelOrder/${id}?customerId=${userId}`);
+                if (resp) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Order Canceled',
+                        text: 'The order has been canceled successfully!',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        // Optionally reload the page or update the state to reflect the changes
+                        window.location.reload();
+                    });
+                }
+            } catch (err) {
+                console.log(err.response.data.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'There was an issue canceling your order. Please try again later.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        } else if (confirmResult.dismiss === Swal.DismissReason.cancel) {
+            // Handle case where user clicks "No, keep it" or closes the dialog
+            Swal.fire({
+                icon: 'info',
+                title: 'Cancelled',
+                text: 'Your order cancellation request has been cancelled.',
+                confirmButtonText: 'OK'
+            });
+        }
     }
+
     const formatDate = (timestamp) => {
         const date = new Date(timestamp);
         const year = date.getFullYear();
@@ -79,19 +125,20 @@ export function OrdersCust(){
                                 <h3 className={`${Style.text3}`}>{elem.startTime}</h3>
                                 <h3 className={`${Style.text3}`}>{elem.problem}</h3>
                                 <h3 className={`${Style.text3}`}>{elem.orderStatus}</h3>
-                                { elem.orderStatus=="Done"? 
-                                <h3 className={`${Style.text3}`}>
-                                    <button className={`border bg-primary rounded-1 ${Style.but} p-1`} onClick={() => handelDone(elem.orderId)}>
-                                        mark done 
-                                    </button>
-                                </h3>:<></>
-                                }
-                                { elem.orderStatus=="Completed"? 
+                                {elem.customerRating!=null?
+                                <></> 
+                                :elem.orderStatus=="Completed"||elem.orderStatus=="Done"? 
                                 <h3 className={`${Style.text3}`}>
                                     <button className={`border bg-primary rounded-1 ${Style.but} p-1`}>
                                         <FeedbackForm orderid={elem.orderId}/> 
                                     </button>
-                                    
+                                </h3>
+                                :
+                                elem.orderStatus !== "Canceled" ?
+                                <h3>
+                                    <button className={`bg-danger rounded-1 ${Style.but} p-1`} onClick={()=>handelCancel(elem.orderId)}>
+                                        Cancel 
+                                    </button>
                                 </h3>:<></>
                                 }
 

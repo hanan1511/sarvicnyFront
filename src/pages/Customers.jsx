@@ -68,7 +68,7 @@ const Customers = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        'https://localhost:7188/api/Admin/GetServiceProvidersRegisterationRequests'
+        'https://localhost:7188/api/Admin/GetProvidersRegistrationRequests'
       );
       // Handle the response data
       setWorkers(response.data.payload);

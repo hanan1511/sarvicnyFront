@@ -11,7 +11,7 @@ const FeedbackForm = ({orderid}) => {
   let api= ``;
   if(location.pathname=="/ordersCust"){
     api = `https://localhost:7188/api/Customer/addCustomerRating/${orderid}`
-  }else if(location.pathname=="/provider/reqdetail"){
+  }else if(location.pathname=="/provider/reqdetail" || location.pathname=="/provider/" ){
      api = `https://localhost:7188/api/ServiceProvider/addProviderRating/${orderid}`
   }
   const handleFeedback = async (rating, feedbackText) => {
@@ -30,6 +30,7 @@ const FeedbackForm = ({orderid}) => {
           title: 'Thank you for your feedback!',
           text: `You selected ${rating} out of 5\n\nAdditional feedback: ${feedbackText}`,
         });
+        window.location.reload();
       }
     }
     

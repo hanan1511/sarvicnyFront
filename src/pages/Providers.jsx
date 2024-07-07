@@ -18,24 +18,24 @@ const Providers = () => {
   const unactiveWorkers = [];
   const [error, setError] = useState(null);
 
-  // const fetchData = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       'https://localhost:7188/api/Admin/getServiceProviders'
-  //     );
-  //     const verifiedWorkers = response.data.payload.filter(worker => worker.isVerified);
-  //     setWorkers(verifiedWorkers);
-  //   } catch (error) {
-  //     console.error('Error fetching data:', error);
-  //     setError('Error fetching data');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        'https://localhost:7188/api/Admin/getServiceProviders'
+      );
+      const verifiedWorkers = response.data.payload.filter(worker => worker.isVerified);
+      setWorkers(verifiedWorkers);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setError('Error fetching data');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const data = React.useMemo(() => (loading ? [] : workers), [loading, workers]);
 

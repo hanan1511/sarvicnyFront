@@ -7,54 +7,54 @@ import {
 } from "react-table";
 import Header from "../components/Header.jsx";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import Style from "../components/Workers/Workers.module.css";
 const SuggestedWorker = () => {
-  const dummyWorkers = [
-    {
-      id: "worker1",
-      firstName: "John",
-      lastName: "Doe",
-      email: "john.doe@example.com",
-      availabilities: [
-        {
-          dayOfWeek: "Monday",
-          slots: [
-            { timeSlotID: "slot1", startTime: "07:00:00", endTime: "08:00:00" },
-            { timeSlotID: "slot2", startTime: "09:00:00", endTime: "10:00:00" },
-          ],
-        },
-        {
-          dayOfWeek: "Tuesday",
-          slots: [
-            { timeSlotID: "slot3", startTime: "11:00:00", endTime: "12:00:00" },
-          ],
-        },
-      ],
-      district: "District 1",
-    },
-    {
-      id: "worker2",
-      firstName: "Jane",
-      lastName: "Smith",
-      email: "jane.smith@example.com",
-      availabilities: [
-        {
-          dayOfWeek: "Wednesday",
-          slots: [
-            { timeSlotID: "slot4", startTime: "13:00:00", endTime: "14:00:00" },
-          ],
-        },
-      ],
-      district: "District 2",
-    },
-    // More workers...
-  ];
-  
-
-  const userId = localStorage.getItem('userId');
+  // const dummyWorkers = [
+  //   {
+  //     id: "worker1",
+  //     firstName: "John",
+  //     lastName: "Doe",
+  //     email: "john.doe@example.com",
+  //     availabilities: [
+  //       {
+  //         dayOfWeek: "Monday",
+  //         slots: [
+  //           { timeSlotID: "slot1", startTime: "07:00:00", endTime: "08:00:00" },
+  //           { timeSlotID: "slot2", startTime: "09:00:00", endTime: "10:00:00" },
+  //         ],
+  //       },
+  //       {
+  //         dayOfWeek: "Tuesday",
+  //         slots: [
+  //           { timeSlotID: "slot3", startTime: "11:00:00", endTime: "12:00:00" },
+  //         ],
+  //       },
+  //     ],
+  //     district: "District 1",
+  //   },
+  //   {
+  //     id: "worker2",
+  //     firstName: "Jane",
+  //     lastName: "Smith",
+  //     email: "jane.smith@example.com",
+  //     availabilities: [
+  //       {
+  //         dayOfWeek: "Wednesday",
+  //         slots: [
+  //           { timeSlotID: "slot4", startTime: "13:00:00", endTime: "14:00:00" },
+  //         ],
+  //       },
+  //     ],
+  //     district: "District 2",
+  //   },
+  //   // More workers...
+  // ];
+  const location = useLocation();
+  let workerId = location.state?.order;
   const navigate = useNavigate();
-  const [workers, setWorkers] = useState(dummyWorkers); // Using dummy data
+  const [workers, setWorkers] = useState(); // Using dummy data
   const [order, setOrder] = useState(null);
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedSlot, setSelectedSlot] = useState(null);
@@ -70,7 +70,7 @@ const SuggestedWorker = () => {
     if(!response.data.isError){
       console.log("data ",response.data.payload);
       setOrder(response.data.payload);
-      navigate('/cart',{state:{order:response.data.payload,id:userId}});
+      navigate('/cart',{state:{order:response.data.payload,id}});
       //alert("the Order Add to the Cart");
     }
   }

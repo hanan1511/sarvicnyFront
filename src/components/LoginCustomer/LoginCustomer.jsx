@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { Audio } from 'react-loader-spinner';
 import logo from "../../assets/logo.png";
 import { useAppContext } from"../context/AppContext";
+import { jwtDecode } from "jwt-decode";
 export default function LoginCustomer() {
   const navigate = useNavigate();
   const [error, seterror] = useState(null);
