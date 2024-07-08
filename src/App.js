@@ -61,6 +61,7 @@ import Feedback from "./components/Feedback/FeedbackForm.jsx";
 import CancledOrders from "./pages/CancledOrders.jsx";
 import SuggestedWorker from "./pages/SuggestedWorker.jsx";
 import AssignedWorker from "./components/AssignedWorker/AssignedWorker.jsx";
+import Policy from "./components/Policy/Policy.jsx";
 let routers = createBrowserRouter([
   {
     path: "/admin",
@@ -128,6 +129,7 @@ let routers = createBrowserRouter([
       { path: "status", element: <Box /> },
       { path: "ordersCust", element: <OrdersCust /> },
       { path: "custProfile", element: <CustomerProfile/> },
+      { path: "policy", element: <Policy/> },
       { index: "*", element: <Notfound /> },
       
     ],

@@ -19,8 +19,16 @@ code {
   background-color: #152238 !important;
   color: white !important;
 }
+.servicebgColor{
+  background-color: #f3f4f6;
 
-
+}
+.servicebgColor h1{
+  font-size: 50px;
+}
+.servicebgColor p{
+  font-size: 26px
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
