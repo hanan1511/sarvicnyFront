@@ -8,8 +8,11 @@ import {
 import Header from "../components/Header.jsx";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Swal from 'sweetalert2';
+import { useLocation } from 'react-router-dom';
 
 const CanceledOrders = () => {
+  const location = useLocation();
   let navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -26,55 +29,113 @@ const CanceledOrders = () => {
       setError(err.response ? err.response.data.message : err.message);
     }
   }
-
+  async function getRefund(){
+    const resp=await axios.get(`https://localhost:7188/api/Admin/getAllOrdersNeedRefund`).catch((err)=>{
+      setError(err.response.data.message);
+    });
+    if(resp){
+      console.log("in refund");
+      setData(resp.data.payload);
+    }
+  }
   const flattenNestedData = (data) => {
     if (!Array.isArray(data)) {
       return [];
     }
-
-    return data.map(order => {
-      const flatOrder = {
-        orderId: order.payload.orderId,
-        orderDate: order.payload.orderDate,
-        orderStatus: order.payload.orderStatus,
-        customerCancelDate: order.payload.customerCancelDate,
-        customerId: order.payload.customerId,
-        customerFN: order.payload.customerFN,
-        customerLastName: order.payload.customerLastName,
-        providerId: order.payload.providerId,
-        providerFN: order.payload.providerFN,
-        providerLN: order.payload.providerLN,
-        orderPrice: order.payload.orderPrice,
-        requestedSlotID: order.payload.requestedSlotID,
-        requestedDay: order.payload.requestedDay,
-        dayOfWeek: order.payload.dayOfWeek,
-        startTime: order.payload.startTime,
-        districtID: order.payload.districtID,
-        districtName: order.payload.districtName,
-        address: order.payload.address,
-        price: order.payload.price,
-        problem: order.payload.problem,
-        providerRating: order.payload.providerRating,
-        providerComment: order.payload.providerComment,
-        customerRating: order.payload.customerRating,
-        customerComment: order.payload.customerComment,
-        orderService: Array.isArray(order.payload.orderService) ? order.payload.orderService.map(service => ({
-          serviceId: service.serviceId,
-          serviceName: service.serviceName,
-          parentServiceID: service.parentServiceID,
-          parentServiceName: service.parentServiceName,
-          criteriaID: service.criteriaID,
-          criteriaName: service.criteriaName,
-          price: service.price
-        })) : []
-      };
-
-      return flatOrder;
-    });
+    if(location.pathname="/admin/canceledOrders"){
+      return data.map(order => {
+        const flatOrder = {
+          orderId: order.payload.orderId,
+          orderDate: order.payload.orderDate,
+          orderStatus: order.payload.orderStatus,
+          customerCancelDate: order.payload.customerCancelDate,
+          customerId: order.payload.customerId,
+          customerFN: order.payload.customerFN,
+          customerLastName: order.payload.customerLastName,
+          providerId: order.payload.providerId,
+          providerFN: order.payload.providerFN,
+          providerLN: order.payload.providerLN,
+          orderPrice: order.payload.orderPrice,
+          requestedSlotID: order.payload.requestedSlotID,
+          requestedDay: order.payload.requestedDay,
+          dayOfWeek: order.payload.dayOfWeek,
+          startTime: order.payload.startTime,
+          districtID: order.payload.districtID,
+          districtName: order.payload.districtName,
+          address: order.payload.address,
+          price: order.payload.price,
+          problem: order.payload.problem,
+          providerRating: order.payload.providerRating,
+          providerComment: order.payload.providerComment,
+          customerRating: order.payload.customerRating,
+          customerComment: order.payload.customerComment,
+          orderService: Array.isArray(order.payload.orderService) ? order.payload.orderService.map(service => ({
+            serviceId: service.serviceId,
+            serviceName: service.serviceName,
+            parentServiceID: service.parentServiceID,
+            parentServiceName: service.parentServiceName,
+            criteriaID: service.criteriaID,
+            criteriaName: service.criteriaName,
+            price: service.price
+          })) : []
+        };
+  
+        return flatOrder;
+      });
+    }else{
+      return data.flatMap(order => {
+        return order.ordersDetails.map(orderDetail => {
+          const payload = orderDetail.payload;
+          
+          const flatOrder = {
+            orderId: payload.orderId,
+            orderDate: payload.orderDate,
+            orderStatus: payload.orderStatus,
+            customerCancelDate: payload.customerCancelDate,
+            customerId: payload.customerId,
+            customerFN: payload.customerFN,
+            customerLastName: payload.customerLastName,
+            providerId: payload.providerId,
+            providerFN: payload.providerFN,
+            providerLN: payload.providerLN,
+            orderPrice: payload.orderPrice,
+            requestedSlotID: payload.requestedSlotID,
+            requestedDay: payload.requestedDay,
+            dayOfWeek: payload.dayOfWeek,
+            startTime: payload.startTime,
+            districtID: payload.districtID,
+            districtName: payload.districtName,
+            address: payload.address,
+            price: payload.price,
+            problem: payload.problem,
+            providerRating: payload.providerRating,
+            providerComment: payload.providerComment,
+            customerRating: payload.customerRating,
+            customerComment: payload.customerComment,
+            orderService: Array.isArray(payload.orderService) ? payload.orderService.map(service => ({
+              serviceId: service.serviceId,
+              serviceName: service.serviceName,
+              parentServiceID: service.parentServiceID,
+              parentServiceName: service.parentServiceName,
+              criteriaID: service.criteriaID,
+              criteriaName: service.criteriaName,
+              price: service.price
+            })) : []
+          };
+    
+          return flatOrder;
+        });
+      });
+    }
+    
   };
 
   useEffect(() => {
-    getCanceled();
+    if(location.pathname="/admin/canceledOrders"){
+      getCanceled();
+    }else{
+      getRefund();
+    }
   }, []);
 
   const data = useMemo(() => flattenNestedData(orders), [orders]);
@@ -96,10 +157,10 @@ const CanceledOrders = () => {
           <div style={{ display: "flex", justifyContent: "center" }}>
             {!row.original.isBlocked && (
               <button
-                onClick={() => handleSuggestions(row.original)}
+                onClick={() => handleSuggestions(row.original.orderId)}
                 className="btn btn-success"
               >
-                Suggestions
+                Action
               </button>
             )}
           </div>
@@ -109,8 +170,34 @@ const CanceledOrders = () => {
     []
   );
 
-  const handleSuggestions = (orderelected) => {
-    navigate('/admin/suggestedWorkers', { state: { order: orderelected } });
+  const handleSuggestions = async (orderId) => {
+    const resp = await axios.post(`https://localhost:7188/api/Admin/ReAssignOrder/${orderId}`).catch((err)=>{
+      setError(err.response.data.message);
+    });
+    if(resp){
+      const providerId = resp?.data?.payload?.providerId;
+      if(providerId){
+        Swal.fire({
+          icon: 'success',
+          title: 'RE-Assign is Done',
+          text: 'RE-Assign is done successfully!',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          // Optionally reload the page or update the state to reflect the changes
+          window.location.reload();
+        });
+      }else{
+        Swal.fire({
+          icon: 'error',
+          title: 'RE-Assign not done',
+          text: 'NO workers to be re-assigned',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          // Optionally reload the page or update the state to reflect the changes
+          window.location.reload();
+        });
+      }
+    }
   };
 
   const {
@@ -136,7 +223,11 @@ const CanceledOrders = () => {
 
   return (
     <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl">
+      {location.pathname=="/admin/canceledOrders"?
       <Header category="Page" title="Canceled Orders" />
+      :
+      <Header category="Page" title="Refund Orders" />
+    }
       <div className="container-fluid mt-4">
 
         <table {...getTableProps()} className="table table-bordered">

@@ -4,7 +4,8 @@ import Mission from "../Mission/Mission.jsx";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from 'sweetalert2';
-
+import Policy from "../Policy/Policy.jsx";
+import { PaypalCheckoutButton } from "../PaypalCheckoutButton.js";
 export default function Cart() {
   const [data, setData] = useState(null);
   let { state } = useLocation();
@@ -150,9 +151,15 @@ export default function Cart() {
                       </select>
                     </div>
                     <div className="bg-white p-3">
-                      <button className="btn rounded-1 bg-black text-white fw-bolder w-100" onClick={() => handelButton()}>
-                        Order cart
-                      </button>
+                      { paymentMethod=="Paypal"?
+                        <div>
+                          <PaypalCheckoutButton id="paypal-button" product={summtion} />
+                        </div>
+                        :
+                        <button className="btn rounded-1 bg-black text-white fw-bolder w-100" onClick={() => handelButton()}>
+                          Order cart
+                        </button>
+                      }
                     </div>
                   </div>
                 </div>
@@ -166,6 +173,7 @@ export default function Cart() {
           </div>
         </div>}
       </section>
+      <Policy/>
       <Mission />
     </>
   );
