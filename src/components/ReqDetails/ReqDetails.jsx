@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import React, { useState, useEffect } from "react";
 import FeedbackForm from "../Feedback/FeedbackForm";
 import { Link, useNavigate } from "react-router-dom";
-
+import Swal from 'sweetalert2';
 function ReqDetails(){
     const [error, seterror] = useState(null);
     const [IsApro, setIsApro] = useState(false);
@@ -46,7 +46,15 @@ function ReqDetails(){
             seterror(err.response.data.message);
             });
         if(!resp.isError){
-            window.alert("you are done");
+            Swal.fire({
+                icon: 'success',
+                title: 'Order is Done',
+                text: 'Order is done successfully!',
+                confirmButtonText: 'OK'
+              }).then(() => {
+                // Optionally reload the page or update the state to reflect the changes
+                window.location.reload();
+              });
             doneHandel();
         }
     }
@@ -200,7 +208,15 @@ function ReqDetails(){
             if(!response.data.isError){
                 setCancel(true);
                 setButtonStates({button1:true,button2:true,button3:true,button4:true,button5:true});
-                window.alert("You have canceled this order");
+                Swal.fire({
+                    icon: 'success',
+                    title: 'order is Canceled',
+                    text: ' order is canceled successfully!',
+                    confirmButtonText: 'OK'
+                  }).then(() => {
+                    // Optionally reload the page or update the state to reflect the changes
+                    window.location.reload();
+                  });
                 window.location.reload();
                 //navigate('/');
             }
@@ -212,7 +228,15 @@ function ReqDetails(){
             seterror(err.response.data.message);
             });
         if(resp){
-            window.alert("you started the order"); 
+            Swal.fire({
+                icon: 'success',
+                title: 'Start Order',
+                text: 'Order is started successfully!',
+                confirmButtonText: 'OK'
+              }).then(() => {
+                // Optionally reload the page or update the state to reflect the changes
+                window.location.reload();
+              }); 
             startHandel();
         }
 
@@ -221,9 +245,17 @@ function ReqDetails(){
     const pressprepareHandel=async ()=>{
         const resp = await axios.post(`${api}Preparing`).catch((err) => {
             seterror(err.response.data.message);
-            });
+        });
         if(!resp.isError){
-            window.alert("you are preparing the order");
+            Swal.fire({
+                icon: 'success',
+                title: 'Preparing Order',
+                text: 'Preparing the Order!',
+                confirmButtonText: 'OK'
+              }).then(() => {
+                // Optionally reload the page or update the state to reflect the changes
+                window.location.reload();
+              });
            prepareHandel();
         }
     }
@@ -233,7 +265,15 @@ function ReqDetails(){
             seterror(err.response.data.message);
             });
         if(!resp.isError){
-            window.alert("you are on the way");
+            Swal.fire({
+                icon: 'success',
+                title: 'Provider is on the way',
+                text: 'Provider is on the way!',
+                confirmButtonText: 'OK'
+              }).then(() => {
+                // Optionally reload the page or update the state to reflect the changes
+                window.location.reload();
+              });
             wayHandel();
         }
     }
@@ -243,7 +283,15 @@ function ReqDetails(){
             seterror(err.response.data.message);
             });
         if(!resp.isError){
-            window.alert("you have arrived");
+            Swal.fire({
+                icon: 'success',
+                title: 'Order is in Progress',
+                text: 'Order is in Progress!',
+                confirmButtonText: 'OK'
+              }).then(() => {
+                // Optionally reload the page or update the state to reflect the changes
+                window.location.reload();
+              });
             progressHandel();
         }
     }

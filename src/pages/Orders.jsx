@@ -3,18 +3,36 @@ import { GridComponent, ColumnsDirective, ColumnDirective, Resize, Sort, Context
 import Header from '../components/Header.jsx';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
-
+import Swal from 'sweetalert2';
 const Orders = () => {
   let navigate = useNavigate();
   const editing = { allowDeleting: true, allowEditing: true };
   const [orders, setOrders] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, seterror] = useState(null);
+  const [selectedOrderStatus, setSelectedOrderStatus] = useState("All");
   const toolbarOptions = ['Search'];
-  
-  const handleRowClick = (rowData) => {
-    console.log('Clicked Row Data:', rowData);
-    navigate(`/admin/orderdet`, { state: { rowData } });
+
+  const flattenNestedData = (data) => {
+    return data.map(order => {
+      const flatOrder = { ...order.payload };
+      flatOrder['orderId'] = order.payload.orderId;
+      flatOrder['customerId'] = order.payload.customerId;
+      flatOrder['customerFN'] = order.payload.customerFN;
+      flatOrder['orderStatus'] = order.payload.orderStatus;
+      flatOrder['orderPrice'] = order.payload.orderPrice;
+      flatOrder['providerFN'] = order.payload.providerFN;
+      flatOrder['startTime'] = order.payload.startTime;
+      flatOrder['dayOfWeek'] = order.payload.dayOfWeek;
+      flatOrder['requestedDay'] = order.payload.requestedDay;
+      if (order.payload.orderService && order.payload.orderService.length > 0) {
+        const service = order.payload.orderService[0];
+        flatOrder['serviceName'] = service.parentServiceName;;
+        flatOrder['criteriaName'] = service.criteriaName;
+        flatOrder['servicePrice'] = service.price;
+      }
+      return flatOrder;
+    });
   };
 
   const fetchData = async () => {
@@ -33,70 +51,101 @@ const Orders = () => {
     fetchData();
   }, []);
 
-  const flattenNestedData = (data) => {
-    return data.map(order => {
-      const flatOrder = { ...order.payload };
-      flatOrder['orderId'] = order.payload.orderId;
-      flatOrder['customerId'] = order.payload.customerId;
-      flatOrder['customerFN'] = order.payload.customerFN;
-      flatOrder['orderStatus'] = order.payload.orderStatus;
-      flatOrder['orderPrice'] = order.payload.orderPrice;
-      if (order.payload.orderService && order.payload.orderService.length > 0) {
-        const service = order.payload.orderService[0];
-        flatOrder['serviceID'] = service.serviceID;
-        flatOrder['serviceName'] = service.serviceName;
-        flatOrder['criteriaID'] = service.criteriaID;
-        flatOrder['criteriaName'] = service.criteriaName;
-        flatOrder['slotID'] = service.slotID;
-        flatOrder['startTime'] = service.startTime;
-        flatOrder['servicePrice'] = service.price;
-        flatOrder['providerFName'] = service.firstName;
-      }
-      return flatOrder;
-    });
+  const flattenedOrders = orders ? flattenNestedData(orders) : [];
+
+  const filteredOrders = selectedOrderStatus === "All"
+    ? flattenedOrders
+    : flattenedOrders.filter(order => order.orderStatus === selectedOrderStatus);
+
+  const handleStatusChange = (event) => {
+    setSelectedOrderStatus(event.target.value);
   };
 
-  const flattenedOrders = orders ? flattenNestedData(orders) : [];
+  async function handleDone(rowData){
+    setLoading(true);
+    const resp = await axios.post(`https://localhost:7188/api/Admin/MarkOrderComplete/${rowData.orderId}`).catch((err)=>{
+      seterror(err.response.data.message);
+      console.log(err.response.data.message);
+      setLoading(false);
+      Swal.fire({
+        icon: 'error',
+        title: 'Order is not done',
+        text: 'ERROR in Making order Done',
+        confirmButtonText: 'OK'
+      }).then(() => {
+        // Optionally reload the page or update the state to reflect the changes
+        window.location.reload();
+      });
+    });
+    if(resp){
+      Swal.fire({
+        icon: 'success',
+        title: 'Order is Completed',
+        text: 'Order is Completed successfully!',
+        confirmButtonText: 'OK'
+      }).then(() => {
+        // Optionally reload the page or update the state to reflect the changes
+        window.location.reload();
+      });
+    }
+  }
 
   const columns = [
     { field: 'orderId', headerText: 'Order ID', width: '200' },
     { field: 'customerId', headerText: 'Customer ID', width: '200' },
     { field: 'customerFN', headerText: 'Customer Name', width: '200' },
     { field: 'orderStatus', headerText: 'Order Status', width: '200' },
-    { field: 'providerFName', headerText: 'Provider Name', width: '200' },
-    { field: 'orderPrice', headerText: 'Order Price', width: '200' },
-    { field: 'serviceID', headerText: 'Service ID', width: '200' },
-    { field: 'serviceName', headerText: 'Service Name', width: '200' },
-    { field: 'criteriaID', headerText: 'Criteria ID', width: '200' },
-    { field: 'criteriaName', headerText: 'Criteria Name', width: '200' },
-    { field: 'slotID', headerText: 'Slot ID', width: '200' },
-    { field: 'startTime', headerText: 'Start Time', width: '200' },
-    { field: 'servicePrice', headerText: 'Service Price', width: '200' },
     {
       field: 'ButtonColumn',
-      headerText: 'Action',
-      width:'200',
-      template: () => (
-        <button className="btn btn-success" onClick={() => handleRowClick}>
-          Change
-        </button>
+      headerText: 'MarkDone',
+      width: '200',
+      template: (props) => (
+        props.orderStatus === 'Done' ? (
+          <button className="btn btn-success" onClick={() => handleDone(props)}>
+            Complete
+          </button>
+        ) : null
       ),
-    }
+    },
+    { field: 'providerFN', headerText: 'Provider Name', width: '200' },
+    { field: 'orderPrice', headerText: 'Order Price', width: '200' },
+    { field: 'serviceName', headerText: 'Service Name', width: '200' },
+    { field: 'criteriaName', headerText: 'Criteria Name', width: '200' },
+    { field: 'requestedDay', headerText: 'Order Date', width: '200' },
+    { field: 'startTime', headerText: 'Start Time', width: '200' },
   ];
 
   return (
     <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl">
       <Header category="Page" title="Customers' Orders" />
+      {loading && <div className={`d-flex justify-content-center`}>
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>}
+      <div className="row mb-3">
+        <label htmlFor="orderStatus" className="form-label">Select Order Status:</label>
+        <select
+          id="orderStatus"
+          className="form-select w-90"
+          value={selectedOrderStatus}
+          onChange={handleStatusChange}
+        >
+          <option value="All">All</option>
+          <option value="Pending">Pending</option>
+          <option value="Done">Done</option>
+        </select>
+      </div>
       <div style={{ width: '100%' }}>
         <GridComponent
-          dataSource={flattenedOrders}
+          dataSource={filteredOrders}
           width="auto"
           allowPaging
           allowSorting
           pageSettings={{ pageCount: 5 }}
           toolbar={toolbarOptions}
           allowResizing={true}
-          rowSelected={(args) => handleRowClick(args.data)}
+          rowSelected={(args) => handleDone(args.data)}
         >
           <ColumnsDirective>
             {columns.map((item, index) => (

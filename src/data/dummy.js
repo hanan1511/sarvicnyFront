@@ -550,10 +550,10 @@ export const links = [
         name: "RefundOrders",
         icon: <AiOutlineShoppingCart />,
       },
-      // {
-      //   name: "reqdet",
-      //   icon: <AiOutlineShoppingCart />,
-      // },
+      {
+        name: "ServiceForProv",
+        icon: <BsPersonFillGear />,
+      },
       {
         name: "customers",
         icon: <RiContactsLine />,

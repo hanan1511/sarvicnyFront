@@ -87,3 +87,33 @@
     border-width: 2px;
     text-align: center;
 }
+
+.walletButton {
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    width: 15%;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  
+  .walletButton:hover {
+    background-color: yellow;
+    color: black;
+  }
+  
+  .walletIcon {
+    font-size: 24px; /* Adjust icon size as needed */
+    margin-right: 10px; /* Space between icon and text */
+  }
+
+  .profileImage {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+  }

@@ -62,6 +62,8 @@ import CancledOrders from "./pages/CancledOrders.jsx";
 import SuggestedWorker from "./pages/SuggestedWorker.jsx";
 import AssignedWorker from "./components/AssignedWorker/AssignedWorker.jsx";
 import Policy from "./components/Policy/Policy.jsx";
+import RefundOrders from"./pages/RefundOrders.jsx";
+import ServiceForProv from "./pages/serviceProvider.jsx";
 let routers = createBrowserRouter([
   {
     path: "/admin",
@@ -72,6 +74,7 @@ let routers = createBrowserRouter([
       { path: "orders", element: <Orders /> },
       { path: "customers", element: <Employees /> },
       { path: "Providers Requests", element: <Customers /> },
+      { path: "ServiceForProv", element: <ServiceForProv/> },
       { path: "kanban", element: <Kanban /> },
       { path: "editor", element: <Editor /> },
       { path: "calendar", element: <Calendar /> },
@@ -88,7 +91,7 @@ let routers = createBrowserRouter([
       { path: "reqdet", element: <RequestDet /> },
       { path: "service Providers", element: <Providers /> },
       { path: "canceledOrders", element: <CancledOrders/> },
-      { path: "RefundOrders", element: <CancledOrders/> },
+      { path: "RefundOrders", element: <RefundOrders/> },
       { path: "suggestedWorkers", element: <SuggestedWorker/> },
       { path: "service", element: <Service /> },
       { path: "orderdet", element: <OrderDet /> },

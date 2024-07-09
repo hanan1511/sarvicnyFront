@@ -119,7 +119,7 @@ function Landpage(){
         <>
         <div className={`${Style.land}`}>
             <div className="row d-flex justify-content-center align-items-center ">
-                <img src="logo2.png" className={`${Style.imgo} col-md-5 img-fluid `}/>
+                <img src="/logo2.png" className={`${Style.imgo} col-md-5 img-fluid `}/>
                 <p className="col-md-6">Welcome to Employees Section</p>
             </div>
         </div>

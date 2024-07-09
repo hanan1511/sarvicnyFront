@@ -14,7 +14,7 @@ export default function Criteria({ id, criteriaName }) {
     }, [criteriaName]); // Run this effect whenever criteriaName changes
 
     return (
-        <div className="col-md-6 mt-5">
+        <div className="col-md-6 mt-5 " style={{ display:"inline-block"}}>
             <div className={`position-relative ${Style.cards}`}>
                 <div>
                     <img src={imge} alt="customer" width={'auto'} height={'400'} className="w-100 rounded-3" />

@@ -1,21 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaBolt, FaBullseye, FaHourglass } from "react-icons/fa";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Style from "./Availability.module.css";
 import axios from "axios";
 import { useAppContext } from"../context/AppContext";
+import Swal from 'sweetalert2';
 const Availability = () => {
   const { userId } = useAppContext();
-  
+  const [loading,setLoading]=useState(false);
   const hoursArray = Array.from({ length: 16 }, (_, index) => index + 7);
 
   async function aval(values) {
+    setLoading(true);
     const response = await axios.post(`https://localhost:7188/api/ServiceProvider/SetAvailability?workerID=${userId}`, values);
 
     console.log(response.data.payload)
     if (!response.isError) {
-      alert("avalabilty add succssfuly");
+      setLoading(false);
+      Swal.fire({
+        icon: 'success',
+        title: 'Availability is Added',
+        text: 'Your Availability is added successfully!',
+        confirmButtonText: 'OK'
+      });
     }
   }
 
@@ -153,6 +161,11 @@ const Availability = () => {
                 </p>
               </div>
             </div>
+            {loading && <div className={`d-flex justify-content-center`}>
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>}
             <div className="col-md-6 p-2">
               <div className={`${Style.outer} p-4`}>
                 <h1 className="text-center mb-3 text-light">Available Dates</h1>

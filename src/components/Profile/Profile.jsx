@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faToggleOn, faToggleOff } from '@fortawesome/free-solid-svg-icons'; // Assuming you have toggle icons imported
 import Swal from 'sweetalert2';
+import { faWallet } from '@fortawesome/free-solid-svg-icons';
 export default function Profile() {
   let userId = localStorage.getItem('userId');
   const [error, setError] = useState(null);
@@ -12,7 +13,7 @@ export default function Profile() {
   const [avail, setAvail] = useState(null);
   const [image, setImage] = useState(null);
   const [districts, setDistricts] = useState([]);
-
+  const [wallet , setWallet]=useState();
   async function handleDistrictToggle(id, currentEnable) {
     try {
       const confirmed = await Swal.fire({
@@ -106,11 +107,20 @@ export default function Profile() {
   }
 
   const base64ToImageUrl = (base64String) => `data:image/jpeg;base64,${base64String}`;
-
+  async function getWallet(){
+    const resp = await axios.get(`https://localhost:7188/api/ServiceProvider/GetProviderWallet/${userId}`).catch((err)=>{
+      setError(err.response.data.message);
+      console.log(error);
+    });
+    if(resp){
+      setWallet(resp.data.payload);
+    }
+  }
   useEffect(() => {
     getProfile();
     getImage();
     getDistricts();
+    getWallet();
   }, []);
 
   return (
@@ -154,19 +164,73 @@ export default function Profile() {
             }
           </div>
 
+
+
           {profile ?
             <Formik initialValues={{}} onSubmit={() => { }}>
               <div className="col-md-5">
                 {image &&
-                  <div className="mb-3 col-md-12">
-                    <label htmlFor="profileImage" className="form-label">Profile Image</label>
-                    <br />
+                  <div className="mb-3 col-md-12" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <img src={base64ToImageUrl(image)} alt="Profile" className={`${Style.profileImage}`} />
                   </div>
                 }
                 <Form className={`${Style.form} row`}>
+                <button
+                  type="button"
+                  className={`${Style.walletButton}`}
+                  data-bs-toggle="modal"
+                  data-bs-target="#exampleModal"
+                >
+                  <FontAwesomeIcon icon={faWallet} className={Style.walletIcon}/>
+                </button>
+                <div
+                  className="modal fade text-black mt-12"
+                  id="exampleModal"
+                  tabindex="-1"
+                  aria-labelledby="exampleModalLabel"
+                  aria-hidden="true"
+                >
+                <div className="modal-dialog">
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <h1 className="modal-title fs-5" id="exampleModalLabel">
+                        wallet 
+                      </h1>
+                      <button
+                        type="button"
+                        className="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                      ></button>
+                    </div>
+                    {wallet && ( // Add this conditional rendering check
+                      <div>
+                      <div className="modal-body">
+                        Your handled balance: {wallet.handeledBalance}
+                      </div>
+                      <div className="modal-body">
+                        Your pending balance: {wallet.pendingBalance}
+                      </div>
+                      <div className="modal-body">
+                        Your total balance: {wallet.totalBalance}
+                      </div>
+                      <div className="modal-footer">
+                        <button
+                          type="button"
+                          className="btn btn-secondary text-black"
+                          data-bs-dismiss="modal"
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                      {/* </div> */}
+                    </div>
+                  </div>
+                </div>
                   <h4 className="text-center">Personal Info</h4>
-
+                  
                   <div className="mb-3 mt-5 col-md-6">
                     <label htmlFor="firstName" className="form-label ">First Name</label>
                     <Field type="text" name="firstName" className="form-control" value={profile.FirstName} />
@@ -234,52 +298,6 @@ export default function Profile() {
                       : <div>No districts found.</div>
                     }
                   </div>
-                  
-                  <button
-        type="button"
-        class="btn text-black "
-        data-bs-toggle="modal"
-        data-bs-target="#exampleModal"
-      >
-        wallet
-      </button>
-
-      <div
-        class="modal fade text-black mt-12"
-        id="exampleModal"
-        tabindex="-1"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">
-                wallet 
-              </h1>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div class="modal-body">Your balance:</div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary text-black "
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
-              {/* <button type="button" class="btn btn-primary text-black">
-                Save changes
-              </button> */}
-            </div>
-          </div>
-        </div>
-      </div>
                 </Form>
               </div>
             </Formik>
